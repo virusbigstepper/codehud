@@ -1,0 +1,220 @@
+.analytics-widget {
+    background: #050505;
+
+    border-radius: 28px;
+
+    padding: 24px;
+
+    display: flex;
+
+    gap: 24px;
+
+    min-height: 380px;
+
+    box-sizing: border-box;
+
+    position: relative;
+}
+
+.wheel-section {
+    width: 280px;
+
+    padding-top: 12px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+}
+
+.problem-wheel-circle {
+    width: 250px;
+    height: 250px;
+    transform: translateY(38px);
+    border-radius: 50%;
+
+    background:
+        conic-gradient(
+            red 0deg 180deg,
+            yellow 180deg 260deg,
+            green 260deg 320deg,
+            blueviolet 320deg 360deg
+        );
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    position: relative;
+}
+
+.problem-wheel-circle::before {
+    content: "";
+
+    position: absolute;
+
+    width: 150px;
+    height: 150px;
+
+    border-radius: 50%;
+
+    background: #050505;
+}
+
+.problem-count {
+    position: relative;
+
+    z-index: 1;
+
+    color: white;
+
+    font-size: 56px;
+
+    font-weight: bold;
+}
+
+.analytics-content {
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 20px;
+
+    color: white;
+
+    min-width: 0;
+}
+
+.analytics-header h1 {
+    font-size: clamp(28px, 3vw, 48px);
+
+    margin: 0;
+}
+
+.analytics-header span {
+    color: #d6d600;
+}
+
+.analytics-header p {
+    margin: 0;
+
+    font-size: 18px;
+}
+
+.screen-time-card {
+    width: 220px;
+
+    padding: 16px;
+
+    border-radius: 18px;
+
+    background: #c8c3c3;
+}
+
+.screen-time-value {
+    font-size: 42px;
+
+    color: white;
+
+    font-weight: bold;
+}
+
+.task-progress {
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    flex-wrap: wrap;
+}
+
+.progress-bar {
+    width: 260px;
+
+    height: 12px;
+
+    background: #d9d9d9;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+
+    background: #14c53b;
+
+    transition: width 0.3s ease;
+}
+
+.heatmap-container {
+    background: #07111d;
+
+    border-radius: 18px;
+
+    padding: 16px;
+
+    overflow: hidden;
+}
+
+.heatmap-grid {
+    display: grid;
+
+    grid-template-columns: repeat(30, 1fr);
+
+    gap: 3px;
+}
+
+.heatmap-cell {
+    aspect-ratio: 1;
+
+    background: #162132;
+
+    border-radius: 2px;
+}
+
+.heatmap-section {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.heatmap-folder {
+    margin: 0;
+    text-align: right;
+
+    color: rgba(255,255,255,0.6);
+
+    font-size: 14px;
+
+    font-weight: 400;
+
+    letter-spacing: 0.2px;
+}
+
+.settings-button {
+    position: absolute;
+
+    top: 20px;
+    left: 20px;
+
+    background: transparent;
+
+    border: none;
+
+    color: white;
+
+    font-size: 28px;
+
+    cursor: pointer;
+}

@@ -1,0 +1,201 @@
+.settings-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(0,0,0,0.75);
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    z-index: 9999;
+}
+
+.settings-modal {
+    width: 1200px;
+
+    max-width: 95vw;
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    background: #050505;
+
+    border-radius: 28px;
+
+    padding: 40px;
+
+    position: relative;
+
+    box-sizing: border-box;
+}
+
+.settings-title {
+    color: white;
+
+    font-size: 72px;
+
+    margin: 0 0 30px 0;
+}
+
+.close-button {
+    position: absolute;
+
+    top: 25px;
+    right: 25px;
+
+    background: none;
+
+    border: none;
+
+    color: #ff5b5b;
+
+    font-size: 52px;
+
+    cursor: pointer;
+}
+
+.settings-grid {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 50px;
+}
+
+.settings-column {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 30px;
+}
+
+.settings-section {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 14px;
+}
+
+.settings-section h2 {
+    color: white;
+
+    font-size: 42px;
+
+    margin: 0 0 10px 0;
+}
+
+.settings-section label {
+    color: white;
+
+    font-size: 18px;
+}
+
+.settings-section input[type="text"] {
+    width: 100%;
+
+    padding: 16px;
+
+    border-radius: 14px;
+
+    border: 1px solid #2b2b2b;
+
+    background: #181818;
+
+    color: white;
+
+    font-size: 18px;
+
+    box-sizing: border-box;
+}
+
+.folder-row {
+    display: flex;
+
+    gap: 12px;
+}
+
+.folder-row input {
+    flex: 1;
+}
+
+.browse-button {
+    padding: 16px 24px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: #1f8cff;
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 16px;
+}
+
+.widget-group {
+    /* background: #111; */
+
+    padding: 20px;
+
+    border-radius: 16px;
+}
+
+.widget-group label {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 10px;
+}
+
+.theme-options {
+    display: flex;
+
+    gap: 25px;
+
+    flex-wrap: wrap;
+}
+
+.theme-options label {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+.save-button {
+    margin-top: 40px;
+
+    width: 100%;
+
+    padding: 18px;
+
+    border: none;
+
+    border-radius: 16px;
+
+    background: #0A84FF;
+
+    color: white;
+
+    font-size: 24px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.save-button:hover {
+    opacity: 0.9;
+}
