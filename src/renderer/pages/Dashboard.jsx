@@ -40,7 +40,7 @@ const Dashboard = () => {
 
                 <div className="right-panel">
 
-                    {/* Remove this later */}
+                    {/* Remove this later
                     <button
                         className="analytics-window-btn"
                         onClick={()=>{
@@ -48,7 +48,7 @@ const Dashboard = () => {
                         }}
                     >
                         Open Analytics
-                    </button>
+                    </button> */}
 
                     <div className="widget-grid">
 
