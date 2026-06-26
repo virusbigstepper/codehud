@@ -1,61 +1,169 @@
-.coding-widget {
-    background: #050505;
+.coding-widget{
 
-    border-radius: 28px;
+    width:100%;
+    height:100%;
 
-    padding: 24px;
+    background:#090909;
 
-    display: flex;
+    border-radius:22px;
 
-    flex-direction: column;
+    border:1px solid rgba(255,255,255,.08);
 
-    justify-content: space-between;
+    padding:22px 26px;
 
-    min-height: 220px;
+    display:flex;
+    flex-direction:column;
 
-    box-sizing: border-box;
+    box-sizing:border-box;
 }
 
-.coding-header {
-    display: flex;
+/* ---------- HEADER ---------- */
 
-    justify-content: space-between;
+.coding-header{
 
-    align-items: center;
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
 }
 
-.coding-header h2 {
-    margin: 0;
+.coding-header h2{
 
-    color: white;
+    margin:0;
 
-    font-size: 24px;
+    color:#ffffff;
+
+    font-size:22px;
+
+    font-weight:400;
 }
 
-.coding-header span {
-    color: #d6d600;
+.coding-header span{
 
-    font-size: 14px;
+    color:#d7d000;
+
+    font-size:15px;
+
+    font-weight:300;
 }
 
-.coding-time {
-    text-align: center;
+/* ---------- BIG TIME ---------- */
 
-    color: rgba(255,255,255,0.4);
+.coding-time{
 
-    font-size: 72px;
+    margin-top:18px;
 
-    font-weight: bold;
+    text-align:center;
+
+    font-size:82px;
+
+    font-weight:400;
+
+    line-height:1;
+
+    letter-spacing:-2px;
+
+    color:#efefef;
 }
 
-.language-list {
-    display: flex;
+/* ---------- LANGUAGES ---------- */
 
-    justify-content: center;
+.language-list{
 
-    gap: 16px;
+    margin-top:28px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:10px;
 }
 
-.language-icon {
-    font-size: 36px;
+.language-card{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    gap:8px;
+}
+
+.language-icon{
+
+    font-size:48px;
+
+    height:50px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+}
+
+.language-card h3{
+
+    margin:0;
+
+    color:white;
+
+    font-size:17px;
+
+    font-weight:300;
+
+    line-height:1;
+}
+
+.language-card p{
+
+    margin:0;
+
+    color:#a8a8a8;
+
+    font-size:13px;
+
+    text-align:center;
+}
+
+
+.coding-divider{
+
+    margin:22px 0 18px;
+
+    width:100%;
+
+    height:1px;
+
+    background:rgba(255,255,255,.12);
+}
+
+
+.top-language{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    font-size:16px;
+}
+
+.top-language span{
+
+    color:#b8b8b8;
+}
+
+.top-language strong{
+
+    color:#e3d300;
+
+    font-weight:600;
 }

@@ -1,116 +1,255 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { FiPlus, FiCalendar } from "react-icons/fi";
 import "./TaskWidget.css";
 import taskService from "../../services/taskService";
-
+import { FiTrash2 } from "react-icons/fi";
 
 const TaskWidget = () => {
 
-    const [tasks, setTasks] = useState(taskService.getTasks());
+    const [tasks, setTasks] = useState(
+        taskService.getTasks()
+    );
 
     const [input, setInput] = useState("");
+
+    const [priority, setPriority] = useState("Low");
+
+    const refreshTasks = () => {
+
+        setTasks([
+            ...taskService.getTasks()
+        ]);
+
+    };
 
     const handleAddTask = () => {
 
         if (!input.trim()) return;
 
-        const newTask = {
+        taskService.addTask({
+
             id: crypto.randomUUID(),
+
             title: input.trim(),
+
             priority,
-            completed: false
-        };
 
-        taskService.addTask(newTask);
+            completed: false,
 
-        setTasks([...taskService.getTasks()]);
+            dueDate: "Today"
+
+        });
+
+        refreshTasks();
 
         setInput("");
-    };
 
-    const [priority, setPriority] = useState("low");    
-
-    const handleRemoveTask = (id) => {
-
-        taskService.removeTask(id);
-
-        setTasks([...taskService.getTasks()]);
     };
 
     const handleToggleTask = (id) => {
 
         taskService.toggleTaskCompletion(id);
-        setTasks([...taskService.getTasks()]);
+
+        refreshTasks();
+
+    };
+
+    const handleRemoveTask = (id) => {
+
+        taskService.removeTask(id);
+
+        refreshTasks();
+
     };
 
     return (
-    <div className="task-widget">
 
-        <div className="tasks-container">
+        <div className="task-widget">
 
-            {tasks.map((task) => (
-                <div className="task-row" key={task.id}>
 
-            <input
-                type="checkbox"
-                checked={task.completed}
-                onChange={() => handleToggleTask(task.id)}
-            />
+            <div className="task-header">
 
-            <span
-                className={`task-title priority-${task.priority.toLowerCase()}
-                    ${task.completed ? "task-completed" : ""}`}
-            >
-                {task.title}
-            </span>
+                <h2>
 
-            <button
-                className="delete-btn"
-                onClick={() => handleRemoveTask(task.id)}
-            >
-                ✕
-            </button>
+                    Tasks
 
-        </div>
-            ))}
+                </h2>
 
-        </div>
+                <button className="task-add-icon">
 
-        <div className="controls">
+                    <FiPlus />
 
-            <input
-                className="task-input"
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                        handleAddTask();
+                </button>
+
+            </div>
+
+
+            <div className="tasks-container">
+
+                {
+
+                    tasks.map((task, index) => (
+
+                        <div
+                            key={task.id}
+                            className="task-card"
+                        >
+
+                            <div
+                                className={`priority-strip priority-${task.priority.toLowerCase()}`}
+                            ></div>
+
+                            <div className="task-main">
+
+                                <div className="task-top">
+
+                                    <input
+                                        type="checkbox"
+                                        checked={task.completed}
+                                        onChange={() =>
+                                            handleToggleTask(task.id)
+                                        }
+                                    />
+
+                                    <h3
+                                        className={`
+                                            task-title
+                                            priority-${task.priority.toLowerCase()}
+                                            ${task.completed ? "task-completed" : ""}
+                                        `}
+                                    >
+
+                                        {task.title}
+
+                                    </h3>
+
+                                    <button
+                                        className="delete-btn"
+                                        onClick={() => handleRemoveTask(task.id)}
+                                    >
+                                        <FiTrash2 />
+                                    </button>
+
+                                </div>
+
+                                <div className="task-meta">
+
+                                    <span
+                                        className={`
+                                            priority-badge
+                                            priority-${task.priority.toLowerCase()}
+                                        `}
+                                    >
+
+                                        {task.priority}
+
+                                    </span>
+
+                                    <span className="due-date">
+
+                                        <FiCalendar />
+
+                                        {task.dueDate}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            {
+
+                                index !== tasks.length - 1 &&
+
+                                <div className="task-divider"></div>
+
+                            }
+
+                        </div>
+
+                    ))
+
+                }
+
+            </div>
+
+
+            <div className="controls">
+
+                <input
+
+                    className="task-input"
+
+                    placeholder="Enter new task"
+
+                    value={input}
+
+                    onChange={(e) =>
+                        setInput(e.target.value)
                     }
-                }}
-                placeholder="enter new task"
-            />
 
-            <select
-                className="priority-select"
-                value={priority}
-                onChange={(e) => setPriority(e.target.value)}
-            >
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-            </select>
+                    onKeyDown={(e) => {
 
-            <button
-                className="add-button"
-                onClick={handleAddTask}
-            >
-                + Add
-            </button>
+                        if (e.key === "Enter") {
+
+                            handleAddTask();
+
+                        }
+
+                    }}
+
+                />
+
+                <select
+
+                    className="priority-select"
+
+                    value={priority}
+
+                    onChange={(e) =>
+                        setPriority(e.target.value)
+                    }
+
+                >
+
+                    <option>
+
+                        Low
+
+                    </option>
+
+                    <option>
+
+                        Medium
+
+                    </option>
+
+                    <option>
+
+                        High
+
+                    </option>
+
+                </select>
+
+                <button
+
+                    className="add-button"
+
+                    onClick={handleAddTask}
+
+                >
+
+                    + Add
+
+                </button>
+
+            </div>
 
         </div>
 
-    </div>
-);
+    );
+
 };
 
 export default TaskWidget;

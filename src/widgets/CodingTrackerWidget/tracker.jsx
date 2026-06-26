@@ -1,15 +1,21 @@
 import "./tracker.css";
 import CodeTrackerService from "../../services/codeTrackerService.js";
+
 import { FaReact } from "react-icons/fa";
-import { SiJavascript } from "react-icons/si";
-import { SiPython } from "react-icons/si";
-import { SiTypescript } from "react-icons/si";
-import { SiCplusplus } from "react-icons/si";
+import {
+    SiJavascript,
+    SiPython,
+    SiTypescript,
+    SiCplusplus
+} from "react-icons/si";
+
 import { useState } from "react";
 
 const CodingTrackerWidget = () => {
 
-    const [stats,setStats] = useState(CodeTrackerService.getStats());
+    const [stats, setStats] = useState(
+        CodeTrackerService.getStats()
+    );
 
     const iconMap = {
         React: <FaReact color="#61DAFB" />,
@@ -20,13 +26,16 @@ const CodingTrackerWidget = () => {
     };
 
     return (
+
         <div className="coding-widget">
 
             <div className="coding-header">
 
                 <h2>Hours Coded</h2>
 
-                <span>{stats.filesChanged} files changed</span>
+                <span>
+                    {stats.filesChanged} files changed
+                </span>
 
             </div>
 
@@ -35,8 +44,11 @@ const CodingTrackerWidget = () => {
                 {stats.codingTime}
 
             </div>
-            // for debugging
-            {/* <button
+
+            {/* Debug Buttons */}
+
+            {/*
+            <button
                 onClick={() => {
 
                     CodeTrackerService.addCodingMinutes(30);
@@ -48,29 +60,78 @@ const CodingTrackerWidget = () => {
                 }}
             >
                 Simulate Time
-            </button> */}
-            {/* <button
-                onClick={()=> {
+            </button>
+
+            <button
+                onClick={() => {
+
                     CodeTrackerService.resetStats();
+
                     setStats(
                         CodeTrackerService.getStats()
                     );
+
                 }}
             >
-                Reset Stats
-            </button> */}
+                Reset
+            </button>
+            */}
+
             <div className="language-list">
 
-                {stats.languagesUsed.map((language, index) => (
-                <div key={index} className="language-icon">
-                    {iconMap[language]}
-                </div>
-))}
+                {stats.languages.map((language, index) => (
+
+                    <div
+                        key={index}
+                        className="language-card"
+                    >
+
+                        <div className="language-icon">
+
+                            {iconMap[language.name]}
+
+                        </div>
+
+                        <h3>
+
+                            {language.time}
+
+                        </h3>
+
+                        <p>
+
+                            {language.name}
+
+                        </p>
+
+                    </div>
+
+                ))}
+
+            </div>
+
+            <div className="coding-divider"></div>
+
+            <div className="top-language">
+
+                <span>
+
+                    Top Language:
+
+                </span>
+
+                <strong>
+
+                    {stats.topLanguage}
+
+                </strong>
 
             </div>
 
         </div>
+
     );
+
 };
 
 export default CodingTrackerWidget;

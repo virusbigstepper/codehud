@@ -1,69 +1,108 @@
-.dashboard {
-    min-height: 100vh;
+.dashboard{
 
-    background: #111;
+    min-height:100vh;
 
-    display: flex;
+    background:#111;
 
-    gap: 24px;
+    display:flex;
 
-    padding: 24px;
+    gap:24px;
 
-    align-items: flex-start;
+    padding:24px;
 
-    box-sizing: border-box;
+    align-items:flex-start;
+
+    box-sizing:border-box;
 }
 
-.left-panel {
-    width: 320px;
+.left-panel{
 
-    flex-shrink: 0;
+    width:320px;
+
+    flex-shrink:0;
 }
 
-.right-panel {
-    flex: 1;
+.right-panel{
 
-    display: flex;
+    flex:1;
 
-    flex-direction: column;
+    display:flex;
 
-    gap: 24px;
+    flex-direction:column;
 
-    min-width: 0;
+    gap:18px;
+
+    min-width:0;
 }
 
-.bottom-row {
-    display: flex;
+/* Temporary */
 
-    gap: 24px;
+.analytics-window-btn{
+
+    width:max-content;
+
+    padding:10px 18px;
+
+    border:none;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:14px;
+
+    background:#ffffff;
 }
 
-.bottom-row > * {
-    flex: 1;
-}
-.settings-button {
-    position: fixed;
+/* Dashboard Grid */
 
-    top: 20px;
-    right: 20px;
+.widget-grid{
 
-    width: 50px;
-    height: 50px;
+    display:grid;
 
-    border: none;
-    border-radius: 50%;
+    grid-template-columns:
+        repeat(auto-fill,minmax(420px,1fr));
 
-    background: #1c1c1c;
+    gap:24px;
 
-    color: white;
-
-    font-size: 24px;
-
-    cursor: pointer;
-
-    z-index: 999;
+    align-items:start;
 }
 
-.settings-button:hover {
-    background: #2c2c2c;
+/* Every widget card */
+
+.widget-grid > *{
+
+    min-height:340px;
+}
+
+/* Settings */
+
+.settings-button{
+
+    position:fixed;
+
+    top:20px;
+    right:20px;
+
+    width:50px;
+    height:50px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#1d1d1d;
+
+    color:white;
+
+    font-size:24px;
+
+    cursor:pointer;
+
+    z-index:999;
+}
+
+.settings-button:hover{
+
+    background:#2b2b2b;
 }
