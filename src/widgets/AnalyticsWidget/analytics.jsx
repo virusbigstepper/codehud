@@ -1,83 +1,84 @@
 import "./analytics.css";
 import AnalyticsServices from "../../services/analyticsService";
-import {useEffect} from "react";
-// import GithubService from "../../services/githubService"
-import CodeforcesService from "../../services/codeforcesService"
-
 
 const AnalyticsWidget = () => {
+
     const stats = AnalyticsServices.getDashboardStats();
-    const trackedFolder = "C:\\Code";
-    useEffect
+
     return (
+
         <div className="analytics-widget">
-            <div className="problem-wheel-circle">
-                <div className="problem-count">
-                    {stats.totalProblems}
+
+            <h2 className="analytics-title">
+                Analytics
+            </h2>
+
+            <div className="analytics-stats">
+
+                <div className="stat-card">
+
+                    <h1>{stats.totalProblems}</h1>
+
+                    <p>Problems Solved</p>
+
                 </div>
-            </div>
 
-            <div className="analytics-content">
-
-                <div className="analytics-header">
+                <div className="stat-card">
 
                     <h1>
-                        You have coded for
-                        <span> {stats.codingTime} </span>
+                        {stats.tasksCompleted}/{stats.totalTasks}
                     </h1>
 
-                    <p>
-                        26% more than yesterday. Nice Going!
-                    </p>
+                    <p>Tasks Completed</p>
 
                 </div>
 
-                <div className="screen-time-card">
-                    27 H 52M
-                </div>
+            </div>
 
-                <div className="task-progress">
+            <div className="analytics-progress">
 
-                    <span>
-                        {stats.tasksCompleted} of {stats.totalTasks} tasks completed.
-                    </span>
+                <div className="progress-bar">
 
-                    <div className="progress-bar">
-                        <div className="progress-fill" style={{width: `${stats.completionPercentage}%`}}></div>
-                    </div>
-
-                    <span>
-                        {stats.completionPercentage}%
-                    </span>
+                    <div
+                        className="progress-fill"
+                        style={{
+                            width: `${stats.completionPercentage}%`
+                        }}
+                    />
 
                 </div>
 
-                <div className="heatmap-section">
+                <span>
+                    {stats.completionPercentage}%
+                </span>
 
-                    <p className="heatmap-folder">
-                        contributing in {trackedFolder}
-                    </p>
+            </div>
 
-                    <div className="heatmap-container">
+            <div className="analytics-bottom">
 
-                        <div className="heatmap-grid">
+                <div>
 
-                            {Array.from({ length: 120 }).map((_, index) => (
-                                <div
-                                    key={index}
-                                    className="heatmap-cell"
-                                />
-                            ))}
+                    <h1>{stats.codingTime}</h1>
 
-                        </div>
+                    <p>Total Time Today</p>
 
-                    </div>
+                </div>
+
+                <div className="improvement">
+
+                    <h1>
+                        26%
+                        <span> ▲</span>
+                    </h1>
+
+                    <p>vs yesterday</p>
 
                 </div>
 
             </div>
 
         </div>
+
     );
 };
 

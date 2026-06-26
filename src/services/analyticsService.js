@@ -11,7 +11,7 @@ class AnalyticsService {
 
         return {
             totalProblems:
-                246+8,
+                254,
             
             codingTime:
                 codeStats.codingTime,

@@ -1,54 +1,160 @@
-import StorageService from './storageService.js';
+import StorageService from "./storageService.js";
 
 const storage = new StorageService();
 
 class TaskService {
+
     constructor(storageService) {
+
         this.storage = storageService;
-        this.tasks = this.storage.loadData("tasks") || [];
+
+        this.tasks =
+            this.storage.loadData("tasks") || [];
+
+        this.migrateTasks();
+
     }
 
-    addTask(task){
-        this.tasks.push(task);
-        this.saveTasks();
-    }
+    migrateTasks() {
 
-    removeTask(id){
-        this.tasks = this.tasks.filter(task => task.id !== id);
-        this.saveTasks();
-    }
+        let updated = false;
 
-    getTasks(){
-        return this.tasks;
-    }
+        this.tasks = this.tasks.map(task => {
 
-    saveTasks(){
-        this.storage.saveData("tasks", this.tasks);
-    }
-    
-    toggleTaskCompletion(id) {
-        const task = this.tasks.find(task => task.id === id);
-        if (task) {
-            task.completed = !task.completed;
+            if (!task.createdAt) {
+
+                task.createdAt = Date.now();
+
+                updated = true;
+
+            }
+
+            if (!task.dueDate) {
+
+                task.dueDate = "Today";
+
+                updated = true;
+
+            }
+
+            return task;
+
+        });
+
+        if (updated) {
+
             this.saveTasks();
+
         }
+
+    }
+
+    addTask(task) {
+
+        this.tasks.unshift({
+
+            id: task.id,
+
+            title: task.title,
+
+            priority: task.priority,
+
+            completed: false,
+
+            createdAt: Date.now(),
+
+            dueDate: task.dueDate || "Today"
+
+        });
+
+        this.saveTasks();
+
+    }
+
+    removeTask(id) {
+
+        this.tasks = this.tasks.filter(
+
+            task => task.id !== id
+
+        );
+
+        this.saveTasks();
+
+    }
+
+    toggleTaskCompletion(id) {
+
+        const task = this.tasks.find(
+
+            task => task.id === id
+
+        );
+
+        if (!task) return;
+
+        task.completed = !task.completed;
+
+        this.saveTasks();
+
+    }
+
+    getTasks() {
+
+        return [...this.tasks];
+
+    }
+
+    saveTasks() {
+
+        this.storage.saveData(
+
+            "tasks",
+
+            this.tasks
+
+        );
+
     }
 
     getStats() {
-        const tasks = this.getTasks();
-        const totalTasks = tasks.length;
-        const completedTasks = tasks.filter(
-            task => task.completed
-        ).length;
 
-        const completionPercentage = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
+        const totalTasks =
+
+            this.tasks.length;
+
+        const completedTasks =
+
+            this.tasks.filter(
+
+                task => task.completed
+
+            ).length;
+
+        const completionPercentage =
+
+            totalTasks === 0
+
+                ? 0
+
+                : Math.round(
+
+                    (completedTasks / totalTasks) * 100
+
+                );
+
         return {
-            totalTasks,
-            completedTasks,
-            completionPercentage
-        };
-    }
-}
 
+            totalTasks,
+
+            completedTasks,
+
+            completionPercentage
+
+        };
+
+    }
+
+}
 
 export default new TaskService(storage);

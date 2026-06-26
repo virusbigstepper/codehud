@@ -1,4 +1,5 @@
 import { Tray, Menu } from "electron";
+import {createAnalyticsWindow} from "./windowManager.js"
 import path from "path";
 
 let tray = null;
@@ -31,6 +32,15 @@ export function createTray(mainWindow) {
             click: () => {
                 mainWindow.show();
                 mainWindow.focus();
+            }
+        },
+        {
+            type: "separator"
+        },
+        {
+            label : "Open Analytics Widget",
+            click : ()=>{
+                createAnalyticsWindow();
             }
         },
         {
