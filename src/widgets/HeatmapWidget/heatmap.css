@@ -1,0 +1,212 @@
+.heatmap-widget{
+
+    width:100%;
+    height:100%;
+
+    background:#090909;
+
+    border-radius:22px;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    padding:16px 18px;
+
+    box-sizing:border-box;
+
+    display:flex;
+    flex-direction:column;
+
+    justify-content:space-between;
+
+    overflow:hidden;
+}
+
+/* ---------------- HEADER ---------------- */
+
+.heatmap-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    margin-bottom:10px;
+}
+
+.heatmap-month{
+
+    color:#ffffff;
+
+    font-size:20px;
+
+    font-weight:400;
+
+    line-height:1;
+}
+
+.heatmap-folder{
+
+    color:#9d9d9d;
+
+    font-size:12px;
+
+    font-weight:300;
+}
+
+/* ---------------- BODY ---------------- */
+
+.heatmap-content{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:28px;
+
+    margin-top:12px;
+}
+
+/* ---------------- GRID ---------------- */
+
+.heatmap-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(7,24px);
+
+    grid-auto-rows:24px;
+
+    gap:7px;
+}
+
+.heatmap-cell{
+
+    width:24px;
+
+    height:24px;
+
+    border-radius:4px;
+
+    background:#232323;
+
+    border:1px solid rgba(255,255,255,.05);
+
+    transition:all .18s ease;
+
+    cursor:pointer;
+}
+
+.heatmap-cell:hover{
+
+    transform:scale(1.12);
+
+    border-color:rgba(255,255,255,.18);
+}
+
+/* ---------------- CONTRIBUTION LEVELS ---------------- */
+
+.level-0{
+
+    background:#222222;
+}
+
+.level-1{
+
+    background:#14351b;
+}
+
+.level-2{
+
+    background:#1d6c2b;
+}
+
+.level-3{
+
+    background:#2dc742;
+}
+
+.level-4{
+
+    background:#4cff69;
+}
+
+/* ---------------- RIGHT SIDE ---------------- */
+
+.heatmap-side{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:space-between;
+
+    gap: 18px;
+
+    min-width:100px;
+
+    height: 210px;
+}
+
+.streak-box{
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    gap:4px;
+}
+
+.streak-box h2{
+
+    margin:0;
+
+    color:white;
+
+    font-size:46px;
+
+    font-weight:400;
+
+    line-height:1;
+}
+
+.streak-box p{
+
+    margin:0;
+
+    color:#b5b5b5;
+
+    font-size:14px;
+
+    font-weight:300;
+
+    line-height:1.2;
+}
+
+/* ---------------- FOOTER ---------------- */
+
+.heatmap-footer{
+
+    margin-top:auto;
+
+    text-align:right;
+
+    color:#d9d000;
+
+    font-size:14px;
+
+    font-weight:400;
+}
+
+.heatmap-cell:hover{
+
+    transform:scale(1.15);
+
+    filter:brightness(1.15);
+
+    box-shadow:0 0 10px rgba(76,255,105,.25);
+}
