@@ -22,6 +22,7 @@ class SettingsService {
             showTaskWidget: true,
             showCodingTracker: true,
             showPlatformAnalyzer: true,
+            showHeatmap : true,
 
             theme: "dark",
 

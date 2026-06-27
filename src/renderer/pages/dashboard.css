@@ -63,7 +63,7 @@
     grid-template-columns:
         repeat(auto-fill,minmax(420px,1fr));
 
-    gap:24px;
+    gap:18px;
 
     align-items:start;
 }

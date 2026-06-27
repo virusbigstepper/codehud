@@ -33,6 +33,7 @@ const SettingsModal = ({ onClose }) => {
             showTaskWidget,
             showCodingTracker,
             showPlatformAnalyzer,
+            showHeatmap,
 
             theme,
 
@@ -57,6 +58,10 @@ const SettingsModal = ({ onClose }) => {
 
     const [showPlatformAnalyzer, setShowPlatformAnalyzer] = useState(
         currentSettings.showPlatformAnalyzer ?? true
+    );
+
+    const [showHeatmap, setShowHeatmap] = useState(
+        currentSettings.showHeatmap ?? true
     );
 
     const [theme, setTheme] = useState(
@@ -210,6 +215,17 @@ const SettingsModal = ({ onClose }) => {
                                 />
                                 Platform Analyzer
                             </label>
+                            
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={showHeatmap}
+                                    onChange={() =>
+                                        setShowHeatmap(!showHeatmap)
+                                    }
+                                />
+                                Heatmap Widget
+                            </label>
 
                         </div>
 
@@ -285,6 +301,7 @@ const SettingsModal = ({ onClose }) => {
                                 />
                                 Remember Widget Position
                             </label>
+
 
                         </div>
 

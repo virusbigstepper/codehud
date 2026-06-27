@@ -2,7 +2,7 @@ import TaskWidget from "../../widgets/TaskWidget/TaskWidget.jsx";
 import CodingTrackerWidget from "../../widgets/CodingTrackerWidget/tracker.jsx";
 import AnalyticsWidget from "../../widgets/AnalyticsWidget/analytics.jsx";
 import PlatformAnalyzerWidget from "../../widgets/PlatoformAnalyzerWidget/analyzer.jsx";
-
+import HeatmapWidget from "../../widgets/HeatmapWidget/heatmap.jsx";
 import "./dashboard.css";
 
 import { useState } from "react";
@@ -67,7 +67,10 @@ const Dashboard = () => {
                             <CodingTrackerWidget />
                         }
 
-                        {/* HeatmapWidget */}
+                        {
+                            settings.showHeatmap &&
+                            <HeatmapWidget />
+                        }
 
                         {/* GithubWidget */}
 
