@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain } from "electron";import {createTray} from "./tray.js";
 import path from "path";
 import { fileURLToPath } from "url";
-import { createAnalyticsWindow } from "./windowManager.js";
+import { openWidget } from "./windowManager.js";
 import fs from "fs";
 
 
@@ -30,17 +30,12 @@ function createWindow() {
 
 
     mainWindow.loadURL("http://localhost:5173");
-
-    mainWindow.on("close", (e)=>{
-        e.preventDefault();
-        mainWindow.hide();
-    });
 }
 
 app.whenReady().then(() => {
     createWindow();
     createTray(mainWindow);
     ipcMain.on("open-analytics-widget", () => {
-    createAnalyticsWindow();
+        openWidget("analytics");
     });
 });

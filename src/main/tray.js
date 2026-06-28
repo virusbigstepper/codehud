@@ -1,5 +1,5 @@
 import { Tray, Menu } from "electron";
-import {createAnalyticsWindow} from "./windowManager.js"
+import {openWidget} from "./windowManager.js"
 import path from "path";
 
 let tray = null;
@@ -18,14 +18,7 @@ export function createTray(mainWindow) {
         mainWindow.show();
         mainWindow.focus();
     });
-    // tray.on("right-click",()=>{
-    //     console.log("RIGHT CLICK")
-    // })
-    // tray.on("click", () => {
-    // console.log("LEFT CLICK");
-    // mainWindow.show();
-    // mainWindow.focus();
-    // });     
+         
     const contextMenu = Menu.buildFromTemplate([
         {
             label: "Open Dashboard",
@@ -37,21 +30,45 @@ export function createTray(mainWindow) {
         {
             type: "separator"
         },
+        // {
+        //     type: "separator"
+        // },
         {
-            label : "Open Analytics Widget",
-            click : ()=>{
-                createAnalyticsWindow();
+            label: "Open Analytics Widget",
+            click: () => {
+                openWidget("analytics");
             }
         },
         {
-            type: "separator"
+            label: "Open Task Widget",
+            click: () => {
+                openWidget("task");
+            }
+        },
+        {
+            label: "Open Coding Widget",
+            click: () => {
+                openWidget("coding");
+            }
+        },
+        {
+            label: "Open Platform Widget",
+            click: () => {
+                openWidget("platform");
+            }
+        },
+        {
+            label: "Open Heatmap Widget",
+            click: () => {
+                openWidget("heatmap");
+            }
         },
         {
             label: "Quit",
             click: () => {
                 mainWindow.destroy();
             }
-        }
+        },
     ]);
 
     tray.setToolTip("CodeHUD");
