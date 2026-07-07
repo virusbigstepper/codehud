@@ -1,19 +1,16 @@
-import { app, BrowserWindow, ipcMain } from "electron";import {createTray} from "./tray.js";
+import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
 import { fileURLToPath } from "url";
-import { openWidget } from "./windowManager.js";
-import fs from "fs";
 
+import { createTray } from "./tray.js";
+import { openWidget } from "./windowManager.js";
+import StorageManager from "./storageManager.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let mainWindow;
-// console.log("PRELOAD PATH:", path.join(__dirname, "preload.cjs"));
-// console.log(
-//     "EXISTS:",
-//     fs.existsSync(path.join(__dirname, "preload.cjs"))
-// );
+
 function createWindow() {
 
     mainWindow = new BrowserWindow({
@@ -33,9 +30,49 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+
     createWindow();
+
     createTray(mainWindow);
-    ipcMain.on("open-analytics-widget", () => {
-        openWidget("analytics");
+
+    ipcMain.on("open-widget", (_, name) => {
+    openWidget(name);
     });
+
+    ipcMain.handle(
+        "storage-save",
+        (_, fileName, data) => {
+
+            return StorageManager.save(fileName, data);
+
+        }
+    );
+
+    ipcMain.handle(
+        "storage-load",
+        (_, fileName) => {
+
+            return StorageManager.load(fileName);
+
+        }
+    );
+
+    ipcMain.handle(
+        "storage-delete",
+        (_, fileName) => {
+
+            return StorageManager.delete(fileName);
+
+        }
+    );
+
+    ipcMain.handle(
+        "storage-exists",
+        (_, fileName) => {
+
+            return StorageManager.exists(fileName);
+
+        }
+    );
+
 });
