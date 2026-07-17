@@ -1,5 +1,10 @@
 import TaskWidget from "../../../widgets/TaskWidget/TaskWidget.jsx";
+import WidgetFrame from "../../components/WidgetFrame.jsx";
 
 export default function TaskPage() {
-    return <TaskWidget />;
+    return (
+        <WidgetFrame title="Tasks">
+            <TaskWidget />
+        </WidgetFrame>
+    );
 }

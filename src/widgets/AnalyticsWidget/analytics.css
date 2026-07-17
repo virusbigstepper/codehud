@@ -9,7 +9,7 @@
 
     border: 2px solid rgba(255,255,255,0.08);
 
-    padding:14px;
+    padding:14px 18px;
 
     display:flex;
 
@@ -20,17 +20,21 @@
     box-sizing: border-box;
 
     color:white;
+
+    overflow:hidden;
 }
 
 .analytics-title{
 
     margin:0;
 
-    font-size:28px;
+    font-size:clamp(20px, 3vw, 28px);
 
     font-weight:300;
 
     letter-spacing:-0.5px;
+
+    flex-shrink:0;
 }
 
 .analytics-stats{
@@ -42,6 +46,10 @@
     align-items:flex-start;
 
     margin-top:4px;
+
+    flex-shrink:0;
+
+    min-width:0;
 }
 
 .stat-card{
@@ -51,17 +59,25 @@
     flex-direction:column;
 
     gap:4px;
+
+    min-width:0;
 }
 
 .stat-card h1{
 
     margin:0;
 
-    font-size:56px;
+    font-size:clamp(32px, 6vw, 56px);
 
     font-weight:300;
 
     line-height:1;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
 }
 
 .stat-card p{
@@ -70,9 +86,11 @@
 
     color:#bdbdbd;
 
-    font-size:18px;
+    font-size:clamp(13px, 2vw, 18px);
 
     font-weight:400;
+
+    white-space:nowrap;
 }
 
 .analytics-progress{
@@ -84,21 +102,21 @@
     gap:14px;
 
     margin-top:4px;
+
+    flex-shrink:0;
 }
 
 .progress-bar{
 
-    width:78%;
+    flex:1;
 
-    height:14px;
+    height:12px;
 
     border-radius:999px;
 
     overflow:hidden;
 
     background:#ECECEC;
-
-    flex:none;
 }
 
 .progress-fill{
@@ -116,11 +134,13 @@
 
     color:#22d63f;
 
-    font-size:24px;
+    font-size:clamp(16px, 2.5vw, 24px);
 
     font-weight:300;
 
-    min-width:60px;
+    min-width:40px;
+
+    white-space:nowrap;
 }
 
 .analytics-bottom{
@@ -132,31 +152,45 @@
     align-items:flex-end;
 
     margin-top:2px;
+
+    flex-shrink:0;
+
+    min-width:0;
 }
 
 .analytics-bottom h1{
 
     margin:0;
 
-    font-size:54px;
+    font-size:clamp(28px, 5vw, 54px);
 
     font-weight:300;
 
     line-height:1;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
 }
 
 .analytics-bottom p{
 
-    margin-top:8px;
+    margin-top:4px;
 
     color:#bdbdbd;
 
-    font-size:18px;
+    font-size:clamp(12px, 1.8vw, 18px);
+
+    white-space:nowrap;
 }
 
 .improvement{
 
     text-align:right;
+
+    min-width:0;
 }
 
 .improvement h1{
@@ -165,16 +199,18 @@
 
     color:#22d63f;
 
-    font-size:54px;
+    font-size:clamp(28px, 5vw, 54px);
 
     font-weight:300;
 
     line-height:1;
+
+    white-space:nowrap;
 }
 
 .improvement span{
 
-    font-size:32px;
+    font-size:clamp(20px, 3vw, 32px);
 
     vertical-align:2px;
 }

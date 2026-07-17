@@ -1,108 +1,145 @@
-.dashboard{
-
-    min-height:100vh;
-
-    background:#111;
-
-    display:flex;
-
-    gap:24px;
-
-    padding:24px;
-
-    align-items:flex-start;
-
-    box-sizing:border-box;
+.dashboard {
+    min-height: 100vh;
+    background: #111;
+    display: flex;
+    gap: 24px;
+    padding: 24px;
+    align-items: flex-start;
+    box-sizing: border-box;
 }
 
-.left-panel{
+/* Launcher Mode (Electron) */
 
-    width:320px;
-
-    flex-shrink:0;
+.dashboard.launcher-mode {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
 }
 
-.right-panel{
-
-    flex:1;
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:18px;
-
-    min-width:0;
+.launcher-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    max-width: 600px;
+    width: 100%;
 }
 
-/* Temporary */
-
-.analytics-window-btn{
-
-    width:max-content;
-
-    padding:10px 18px;
-
-    border:none;
-
-    border-radius:10px;
-
-    cursor:pointer;
-
-    font-size:14px;
-
-    background:#ffffff;
+.launcher-title {
+    font-size: 36px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
 }
 
-/* Dashboard Grid */
-
-.widget-grid{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(auto-fill,minmax(420px,1fr));
-
-    gap:18px;
-
-    align-items:start;
+.launcher-subtitle {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
 }
 
-/* Every widget card */
+.launcher-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    width: 100%;
+    margin-top: 16px;
+}
 
-.widget-grid > *{
+.launcher-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 28px 16px;
+    background: #1a1a1a;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
 
-    min-height:340px;
+.launcher-card:hover {
+    background: #222;
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.launcher-card:active {
+    transform: translateY(0);
+}
+
+.launcher-card-icon {
+    font-size: 28px;
+    color: #4fc3f7;
+    display: flex;
+}
+
+.launcher-card-label {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+.launcher-footer {
+    margin-top: 24px;
+}
+
+.launcher-footer p {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* Browser Mode (original layout) */
+
+.left-panel {
+    width: 320px;
+    flex-shrink: 0;
+}
+
+.right-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0;
+}
+
+.widget-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 18px;
+    align-items: start;
+}
+
+.widget-grid > * {
+    min-height: 340px;
 }
 
 /* Settings */
 
-.settings-button{
-
-    position:fixed;
-
-    top:20px;
-    right:20px;
-
-    width:50px;
-    height:50px;
-
-    border:none;
-
-    border-radius:50%;
-
-    background:#1d1d1d;
-
-    color:white;
-
-    font-size:24px;
-
-    cursor:pointer;
-
-    z-index:999;
+.settings-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background: #1d1d1d;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.settings-button:hover{
-
-    background:#2b2b2b;
+.settings-button:hover {
+    background: #2b2b2b;
 }

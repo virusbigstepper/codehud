@@ -1,5 +1,5 @@
 import { Tray, Menu } from "electron";
-import {openWidget} from "./windowManager.js"
+import { toggleWidget, isOpen, getWidgetNames, closeAllWidgets } from "./windowManager.js";
 import path from "path";
 
 let tray = null;
@@ -11,14 +11,48 @@ export function createTray(mainWindow) {
         "public",
         "codehud.png"
     );
-    console.log(iconPath);
+
     tray = new Tray(iconPath);
 
     tray.on("click", () => {
         mainWindow.show();
         mainWindow.focus();
     });
-         
+
+    buildMenu(mainWindow);
+
+    tray.setToolTip("CodeHUD");
+
+}
+
+function buildMenu(mainWindow) {
+
+    const widgetNames = getWidgetNames();
+
+    const widgetLabels = {
+        analytics: "Analytics",
+        task: "Tasks",
+        coding: "Coding Tracker",
+        platform: "Platform Analyzer",
+        heatmap: "Heatmap"
+    };
+
+    const widgetItems = widgetNames.map(name => ({
+
+        label: widgetLabels[name] || name,
+        type: "checkbox",
+        checked: isOpen(name),
+        click: () => {
+
+            toggleWidget(name);
+
+            // Rebuild menu after toggle to update checkbox state
+            setTimeout(() => buildMenu(mainWindow), 200);
+
+        }
+
+    }));
+
     const contextMenu = Menu.buildFromTemplate([
         {
             label: "Open Dashboard",
@@ -30,48 +64,41 @@ export function createTray(mainWindow) {
         {
             type: "separator"
         },
-        // {
-        //     type: "separator"
-        // },
         {
-            label: "Open Analytics Widget",
+            label: "Widgets",
+            enabled: false
+        },
+        ...widgetItems,
+        {
+            type: "separator"
+        },
+        {
+            label: "Close All Widgets",
             click: () => {
-                openWidget("analytics");
+
+                closeAllWidgets();
+                setTimeout(() => buildMenu(mainWindow), 200);
+
             }
         },
         {
-            label: "Open Task Widget",
-            click: () => {
-                openWidget("task");
-            }
-        },
-        {
-            label: "Open Coding Widget",
-            click: () => {
-                openWidget("coding");
-            }
-        },
-        {
-            label: "Open Platform Widget",
-            click: () => {
-                openWidget("platform");
-            }
-        },
-        {
-            label: "Open Heatmap Widget",
-            click: () => {
-                openWidget("heatmap");
-            }
+            type: "separator"
         },
         {
             label: "Quit",
             click: () => {
+                closeAllWidgets();
                 mainWindow.destroy();
             }
-        },
+        }
     ]);
 
-    tray.setToolTip("CodeHUD");
-    // console.log("Tray created");
     tray.setContextMenu(contextMenu);
+
+}
+
+export function refreshTrayMenu(mainWindow) {
+
+    buildMenu(mainWindow);
+
 }

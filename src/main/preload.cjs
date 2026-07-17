@@ -52,5 +52,12 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ipcRenderer.send(
             "update-tracked-folder",
             folder
+        ),
+
+    // LeetCode fetch (bypasses CORS via main process)
+    fetchLeetcode: (username) =>
+        ipcRenderer.invoke(
+            "fetch-leetcode",
+            username
         )
 });

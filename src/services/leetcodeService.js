@@ -19,6 +19,35 @@ class LeetcodeService {
 
         }
 
+        // In Electron, use IPC to fetch from main process (avoids CORS)
+        if (window.electronAPI && window.electronAPI.fetchLeetcode) {
+
+            try {
+
+                const result = await window.electronAPI.fetchLeetcode(username);
+                return result;
+
+            } catch (e) {
+
+                return {
+                    totalSolved: 0,
+                    easySolved: 0,
+                    mediumSolved: 0,
+                    hardSolved: 0,
+                    error: "Network error fetching LeetCode data"
+                };
+
+            }
+
+        }
+
+        // Browser fallback: direct fetch (may be blocked by CORS)
+        return await this.fetchDirect(username);
+
+    }
+
+    async fetchDirect(username) {
+
         const query = `
             query getUserProfile($username: String!) {
                 matchedUser(username: $username) {
@@ -66,56 +95,7 @@ class LeetcodeService {
 
             const data = await response.json();
 
-            if (!data.data || !data.data.matchedUser) {
-
-                return {
-                    totalSolved: 0,
-                    easySolved: 0,
-                    mediumSolved: 0,
-                    hardSolved: 0,
-                    error: "LeetCode user not found"
-                };
-
-            }
-
-            const submissions =
-                data.data.matchedUser.submitStats.acSubmissionNum;
-
-            // submissions is an array like:
-            // [{ difficulty: "All", count: X }, { difficulty: "Easy", count: Y }, ...]
-            let totalSolved = 0;
-            let easySolved = 0;
-            let mediumSolved = 0;
-            let hardSolved = 0;
-
-            for (const entry of submissions) {
-
-                switch (entry.difficulty) {
-
-                    case "All":
-                        totalSolved = entry.count;
-                        break;
-                    case "Easy":
-                        easySolved = entry.count;
-                        break;
-                    case "Medium":
-                        mediumSolved = entry.count;
-                        break;
-                    case "Hard":
-                        hardSolved = entry.count;
-                        break;
-
-                }
-
-            }
-
-            return {
-                totalSolved,
-                easySolved,
-                mediumSolved,
-                hardSolved,
-                error: null
-            };
+            return this.parseResponse(data);
 
         } catch (e) {
 
@@ -128,6 +108,57 @@ class LeetcodeService {
             };
 
         }
+
+    }
+
+    parseResponse(data) {
+
+        if (!data.data || !data.data.matchedUser) {
+
+            return {
+                totalSolved: 0,
+                easySolved: 0,
+                mediumSolved: 0,
+                hardSolved: 0,
+                error: "LeetCode user not found"
+            };
+
+        }
+
+        const submissions =
+            data.data.matchedUser.submitStats.acSubmissionNum;
+
+        let totalSolved = 0;
+        let easySolved = 0;
+        let mediumSolved = 0;
+        let hardSolved = 0;
+
+        for (const entry of submissions) {
+
+            switch (entry.difficulty) {
+                case "All":
+                    totalSolved = entry.count;
+                    break;
+                case "Easy":
+                    easySolved = entry.count;
+                    break;
+                case "Medium":
+                    mediumSolved = entry.count;
+                    break;
+                case "Hard":
+                    hardSolved = entry.count;
+                    break;
+            }
+
+        }
+
+        return {
+            totalSolved,
+            easySolved,
+            mediumSolved,
+            hardSolved,
+            error: null
+        };
 
     }
 
