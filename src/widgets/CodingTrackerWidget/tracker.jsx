@@ -9,7 +9,7 @@ import {
     SiCplusplus
 } from "react-icons/si";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const CodingTrackerWidget = () => {
 
@@ -17,6 +17,19 @@ const CodingTrackerWidget = () => {
         CodeTrackerService.getStats()
     );
 
+    useEffect(() => {
+
+        const updateStats = () => {
+
+            setStats(CodeTrackerService.getStats());
+
+        };
+
+        const unsubscribe = CodeTrackerService.subscribe(updateStats);
+
+        return () => unsubscribe();
+
+    }, []);
     const iconMap = {
         React: <FaReact color="#61DAFB" />,
         JavaScript: <SiJavascript color="#F7DF1E" />,

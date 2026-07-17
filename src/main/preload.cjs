@@ -9,29 +9,48 @@ contextBridge.exposeInMainWorld("electronAPI", {
             name
         ),
 
-        save : (fileName,data) =>
-            ipcRenderer.invoke(
-                "storage-save",
-                fileName,
-                data
+    save: (fileName, data) =>
+        ipcRenderer.invoke(
+            "storage-save",
+            fileName,
+            data
         ),
 
-        load : (fileName) =>
-            ipcRenderer.invoke(
-                "storage-load",
-                fileName
-        ),
-        
-        deleteFile : (fileName) =>
-            ipcRenderer.invoke(
-                "storage-delete",
-                fileName
+    load: (fileName) =>
+        ipcRenderer.invoke(
+            "storage-load",
+            fileName
         ),
 
-        exists: (fileName) =>
-            ipcRenderer.invoke(
-                "storage-exists",
-                fileName
+    deleteFile: (fileName) =>
+        ipcRenderer.invoke(
+            "storage-delete",
+            fileName
         ),
 
+    exists: (fileName) =>
+        ipcRenderer.invoke(
+            "storage-exists",
+            fileName
+        ),
+
+    // File watcher events
+    onFileChanged: (callback) => {
+        ipcRenderer.on("file-changed", (_, event) => {
+            callback(event);
+        });
+    },
+
+    onCodingTick: (callback) => {
+        ipcRenderer.on("coding-tick", (_, data) => {
+            callback(data);
+        });
+    },
+
+    // Update tracked folder
+    updateTrackedFolder: (folder) =>
+        ipcRenderer.send(
+            "update-tracked-folder",
+            folder
+        )
 });

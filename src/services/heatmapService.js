@@ -41,6 +41,20 @@ class HeatmapService {
 
             }
 
+            // Listen for file change events to auto-record activity
+            window.electronAPI.onFileChanged(() => {
+
+                this.recordActivity(1, 0);
+
+            });
+
+            // Listen for coding ticks to record minutes
+            window.electronAPI.onCodingTick((data) => {
+
+                this.recordActivity(0, data.minutes);
+
+            });
+
         }
 
     }

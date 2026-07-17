@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import { createTray } from "./tray.js";
 import { openWidget } from "./windowManager.js";
 import StorageManager from "./storageManager.js";
+import FileWatcher from "./fileWatcher.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,6 +35,9 @@ app.whenReady().then(() => {
     createWindow();
 
     createTray(mainWindow);
+
+    // Start file system monitoring
+    FileWatcher.start(mainWindow);
 
     ipcMain.on("open-widget", (_, name) => {
     openWidget(name);
@@ -74,5 +78,11 @@ app.whenReady().then(() => {
 
         }
     );
+
+    ipcMain.on("update-tracked-folder", (_, folder) => {
+
+        FileWatcher.updateTrackedFolder(folder);
+
+    });
 
 });

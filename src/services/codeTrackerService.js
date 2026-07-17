@@ -60,6 +60,20 @@ class CodeTrackerService {
 
             }
 
+            // Listen for file change events from main process
+            window.electronAPI.onFileChanged((event) => {
+
+                this.handleFileChange(event);
+
+            });
+
+            // Listen for coding time ticks
+            window.electronAPI.onCodingTick((data) => {
+
+                this.handleCodingTick(data);
+
+            });
+
         }
 
     }
@@ -91,6 +105,66 @@ class CodeTrackerService {
             "C++": 0
 
         };
+
+    }
+
+    handleFileChange(event) {
+
+        // Increment file count
+        this.stats.filesChanged++;
+
+        // Track language minutes (1 min per file change as activity signal)
+        const language = event.language;
+
+        if (language && language !== "Other") {
+
+            if (!this.stats.languageMinutes[language]) {
+
+                this.stats.languageMinutes[language] = 0;
+
+            }
+
+            this.stats.languageMinutes[language] += 1;
+
+        }
+
+        this.save();
+
+    }
+
+    handleCodingTick(data) {
+
+        this.stats.codingTimeMinutes += data.minutes;
+
+        // Also add to top active language if we have recent activity
+        const topLang = this.getTopActiveLanguage();
+
+        if (topLang) {
+
+            if (!this.stats.languageMinutes[topLang]) {
+
+                this.stats.languageMinutes[topLang] = 0;
+
+            }
+
+            this.stats.languageMinutes[topLang] += data.minutes;
+
+        }
+
+        this.save();
+
+    }
+
+    getTopActiveLanguage() {
+
+        // Return the language with most minutes as proxy for current activity
+        const entries = Object.entries(this.stats.languageMinutes);
+
+        if (entries.length === 0) return null;
+
+        return entries.reduce((best, current) =>
+            current[1] > best[1] ? current : best
+        )[0];
 
     }
 

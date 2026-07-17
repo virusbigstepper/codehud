@@ -14,15 +14,7 @@ const TaskWidget = () => {
 
     useEffect(() => {
 
-        const loadTasks = async () => {
-
-            await taskService.initialize();
-
-            setTasks(taskService.getTasks());
-
-        };
-
-        loadTasks();
+        setTasks(taskService.getTasks());
 
     }, []);
 

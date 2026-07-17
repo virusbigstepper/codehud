@@ -1,9 +1,26 @@
+import { useState, useEffect } from "react";
 import "./heatmap.css";
 import HeatmapService from "../../services/heatmapService.js";
 
 const HeatmapWidget = () => {
 
-    const stats = HeatmapService.getStats();
+    const [stats, setStats] = useState(
+        HeatmapService.getStats()
+    );
+
+    useEffect(() => {
+
+        const updateStats = () => {
+
+            setStats(HeatmapService.getStats());
+
+        };
+
+        const unsubscribe = HeatmapService.subscribe(updateStats);
+
+        return () => unsubscribe();
+
+    }, []);
 
     return (
 
