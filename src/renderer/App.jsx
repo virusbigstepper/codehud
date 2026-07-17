@@ -27,6 +27,11 @@ function App() {
             await heatmapService.initialize();
             await taskService.initialize();
 
+            document.documentElement.setAttribute(
+                "data-theme",
+                "dark"
+            );
+
             setReady(true);
 
         };

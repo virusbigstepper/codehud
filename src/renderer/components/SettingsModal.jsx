@@ -39,11 +39,18 @@ const SettingsModal = ({ onClose }) => {
             showPlatformAnalyzer,
             showHeatmap,
 
+            startupWidgets,
+
             theme,
 
             launchOnStartup,
             rememberWidgetPosition
         });
+
+        if (window.electronAPI) {
+            window.electronAPI.setLaunchOnStartup(launchOnStartup);
+            window.electronAPI.updateTrackedFolder(trackedFolder);
+        }
 
         onClose();
     };
@@ -79,6 +86,23 @@ const SettingsModal = ({ onClose }) => {
     const [rememberWidgetPosition, setRememberWidgetPosition] = useState(
         currentSettings.rememberWidgetPosition ?? true
     );
+
+    const [startupWidgets, setStartupWidgets] = useState(
+        currentSettings.startupWidgets ?? {
+            analytics: false,
+            task: false,
+            coding: false,
+            platform: false,
+            heatmap: false
+        }
+    );
+
+    const toggleStartupWidget = (name) => {
+        setStartupWidgets(prev => ({
+            ...prev,
+            [name]: !prev[name]
+        }));
+    };
 
     return (
         <div className="settings-overlay">
@@ -167,7 +191,15 @@ const SettingsModal = ({ onClose }) => {
                                     }
                                 />
 
-                                <button className="browse-button">
+                                <button
+                                    className="browse-button"
+                                    onClick={async () => {
+                                        if (window.electronAPI && window.electronAPI.browseFolder) {
+                                            const folder = await window.electronAPI.browseFolder();
+                                            if (folder) setTrackedFolder(folder);
+                                        }
+                                    }}
+                                >
                                     Browse
                                 </button>
 
@@ -183,62 +215,100 @@ const SettingsModal = ({ onClose }) => {
 
                             <h2>Widgets</h2>
 
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    checked={showAnalytics}
-                                    onChange={() =>
-                                        setShowAnalytics(!showAnalytics)
-                                    }
-                                />
-                                Analytics Widget
-                            </label>
+                            <div className="widget-row">
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        checked={showAnalytics}
+                                        onChange={() => setShowAnalytics(!showAnalytics)}
+                                    />
+                                    Analytics
+                                </label>
+                                <label className="startup-toggle">
+                                    <input
+                                        type="checkbox"
+                                        checked={startupWidgets.analytics}
+                                        onChange={() => toggleStartupWidget("analytics")}
+                                    />
+                                    Auto-start
+                                </label>
+                            </div>
 
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    checked={showTaskWidget}
-                                    onChange={() =>
-                                        setShowTaskWidget(!showTaskWidget)
-                                    }
-                                />
-                                Task Widget
-                            </label>
+                            <div className="widget-row">
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        checked={showTaskWidget}
+                                        onChange={() => setShowTaskWidget(!showTaskWidget)}
+                                    />
+                                    Tasks
+                                </label>
+                                <label className="startup-toggle">
+                                    <input
+                                        type="checkbox"
+                                        checked={startupWidgets.task}
+                                        onChange={() => toggleStartupWidget("task")}
+                                    />
+                                    Auto-start
+                                </label>
+                            </div>
 
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    checked={showCodingTracker}
-                                    onChange={() =>
-                                        setShowCodingTracker(!showCodingTracker)
-                                    }
-                                />
-                                Coding Tracker
-                            </label>
+                            <div className="widget-row">
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        checked={showCodingTracker}
+                                        onChange={() => setShowCodingTracker(!showCodingTracker)}
+                                    />
+                                    Coding Tracker
+                                </label>
+                                <label className="startup-toggle">
+                                    <input
+                                        type="checkbox"
+                                        checked={startupWidgets.coding}
+                                        onChange={() => toggleStartupWidget("coding")}
+                                    />
+                                    Auto-start
+                                </label>
+                            </div>
 
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    checked={showPlatformAnalyzer}
-                                    onChange={() =>
-                                        setShowPlatformAnalyzer(
-                                            !showPlatformAnalyzer
-                                        )
-                                    }
-                                />
-                                Platform Analyzer
-                            </label>
-                            
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    checked={showHeatmap}
-                                    onChange={() =>
-                                        setShowHeatmap(!showHeatmap)
-                                    }
-                                />
-                                Heatmap Widget
-                            </label>
+                            <div className="widget-row">
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        checked={showPlatformAnalyzer}
+                                        onChange={() => setShowPlatformAnalyzer(!showPlatformAnalyzer)}
+                                    />
+                                    Platform Analyzer
+                                </label>
+                                <label className="startup-toggle">
+                                    <input
+                                        type="checkbox"
+                                        checked={startupWidgets.platform}
+                                        onChange={() => toggleStartupWidget("platform")}
+                                    />
+                                    Auto-start
+                                </label>
+                            </div>
+
+                            <div className="widget-row">
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        checked={showHeatmap}
+                                        onChange={() => setShowHeatmap(!showHeatmap)}
+                                    />
+                                    Heatmap
+                                </label>
+                                <label className="startup-toggle">
+                                    <input
+                                        type="checkbox"
+                                        checked={startupWidgets.heatmap}
+                                        onChange={() => toggleStartupWidget("heatmap")}
+                                    />
+                                    Auto-start
+                                </label>
+                            </div>
 
                         </div>
 

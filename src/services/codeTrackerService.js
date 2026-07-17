@@ -7,7 +7,6 @@ class CodeTrackerService {
         this._saveTimer = null;
         this._initialized = false;
 
-        // Eagerly load from localStorage for browser
         if (!this.isElectron()) {
 
             const raw = localStorage.getItem("codingStats");
@@ -64,14 +63,12 @@ class CodeTrackerService {
 
             }
 
-            // Listen for batched file change events
             window.electronAPI.onFileChanged((batch) => {
 
                 this.handleFileChangeBatch(batch);
 
             });
 
-            // Listen for coding time ticks
             window.electronAPI.onCodingTick((data) => {
 
                 this.handleCodingTick(data);
@@ -114,12 +111,10 @@ class CodeTrackerService {
 
     handleFileChangeBatch(batch) {
 
-        // batch = { files: [...], count: N }
         const files = batch.files || [];
 
         this.stats.filesChanged += files.length;
 
-        // Accumulate language activity
         for (const file of files) {
 
             const language = file.language;
@@ -152,7 +147,6 @@ class CodeTrackerService {
 
     debouncedSave() {
 
-        // Debounce saves to avoid hammering disk/IPC
         if (this._saveTimer) return;
 
         this._saveTimer = setTimeout(() => {

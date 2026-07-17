@@ -6,6 +6,8 @@ class TaskService {
 
         this.listeners = [];
 
+        this._initialized = false;
+
     }
 
     isElectron() {
@@ -16,6 +18,9 @@ class TaskService {
 
     async initialize() {
 
+        if (this._initialized) return;
+        this._initialized = true;
+
         if (this.isElectron()) {
 
             const data = await window
@@ -23,6 +28,14 @@ class TaskService {
                 .load("tasks.json");
 
             this.tasks = data || [];
+
+            window.electronAPI.onTasksUpdated(async () => {
+
+                const freshData = await window.electronAPI.load("tasks.json");
+                this.tasks = freshData || [];
+                this.listeners.forEach(listener => listener());
+
+            });
 
         } else {
 
@@ -90,7 +103,7 @@ class TaskService {
 
         this.saveTasks();
 
-        this.notifyListeners();
+        this.notifyAndBroadcast();
 
     }
 
@@ -104,7 +117,7 @@ class TaskService {
 
         this.saveTasks();
 
-        this.notifyListeners();
+        this.notifyAndBroadcast();
 
     }
 
@@ -122,7 +135,7 @@ class TaskService {
 
         this.saveTasks();
 
-        this.notifyListeners();
+        this.notifyAndBroadcast();
 
     }
 
@@ -212,9 +225,15 @@ class TaskService {
 
     }
 
-    notifyListeners() {
+    notifyAndBroadcast() {
 
         this.listeners.forEach(listener => listener());
+
+        if (this.isElectron() && window.electronAPI.broadcastTasksChanged) {
+
+            window.electronAPI.broadcastTasksChanged();
+
+        }
 
     }
 

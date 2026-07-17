@@ -1,15 +1,43 @@
 import "./tracker.css";
 import CodeTrackerService from "../../services/codeTrackerService.js";
 
-import { FaReact } from "react-icons/fa";
+import { FaReact, FaJava, FaPhp, FaRust } from "react-icons/fa";
 import {
     SiJavascript,
     SiPython,
     SiTypescript,
-    SiCplusplus
+    SiCplusplus,
+    SiGo,
+    SiRuby,
+    SiSwift,
+    SiKotlin,
+    SiDart,
+    SiLua,
+    SiVuedotjs,
+    SiSvelte
 } from "react-icons/si";
 
 import { useState, useEffect } from "react";
+
+const iconMap = {
+    React: <FaReact color="#61DAFB" />,
+    JavaScript: <SiJavascript color="#F7DF1E" />,
+    Python: <SiPython color="#3776AB" />,
+    TypeScript: <SiTypescript color="#3178C6" />,
+    "C++": <SiCplusplus color="#00599C" />,
+    "C": <SiCplusplus color="#A8B9CC" />,
+    Java: <FaJava color="#ED8B00" />,
+    Go: <SiGo color="#00ADD8" />,
+    Rust: <FaRust color="#DEA584" />,
+    Ruby: <SiRuby color="#CC342D" />,
+    PHP: <FaPhp color="#777BB4" />,
+    Swift: <SiSwift color="#FA7343" />,
+    Kotlin: <SiKotlin color="#7F52FF" />,
+    Dart: <SiDart color="#0175C2" />,
+    Lua: <SiLua color="#2C2D72" />,
+    Vue: <SiVuedotjs color="#4FC08D" />,
+    Svelte: <SiSvelte color="#FF3E00" />
+};
 
 const CodingTrackerWidget = () => {
 
@@ -30,13 +58,11 @@ const CodingTrackerWidget = () => {
         return () => unsubscribe();
 
     }, []);
-    const iconMap = {
-        React: <FaReact color="#61DAFB" />,
-        JavaScript: <SiJavascript color="#F7DF1E" />,
-        Python: <SiPython color="#3776AB" />,
-        TypeScript: <SiTypescript color="#3178C6" />,
-        "C++": <SiCplusplus color="#00599C" />
-    };
+
+    const activeLanguages = stats.languages
+        .filter(lang => lang.minutes > 0)
+        .sort((a, b) => b.minutes - a.minutes)
+        .slice(0, 5);
 
     return (
 
@@ -58,68 +84,38 @@ const CodingTrackerWidget = () => {
 
             </div>
 
-            {/* Debug Buttons */}
-
-            {/*
-            <button
-                onClick={() => {
-
-                    CodeTrackerService.addCodingMinutes(30);
-
-                    setStats(
-                        CodeTrackerService.getStats()
-                    );
-
-                }}
-            >
-                Simulate Time
-            </button>
-
-            <button
-                onClick={() => {
-
-                    CodeTrackerService.resetStats();
-
-                    setStats(
-                        CodeTrackerService.getStats()
-                    );
-
-                }}
-            >
-                Reset
-            </button>
-            */}
-
             <div className="language-list">
 
-                {stats.languages.map((language, index) => (
+                {activeLanguages.length === 0 ? (
 
-                    <div
-                        key={index}
-                        className="language-card"
-                    >
+                    <p className="no-activity">No coding activity yet</p>
 
-                        <div className="language-icon">
+                ) : (
 
-                            {iconMap[language.name]}
+                    activeLanguages.map((language, index) => (
+
+                        <div
+                            key={index}
+                            className="language-card"
+                        >
+
+                            <div className="language-icon">
+
+                                {iconMap[language.name] || <span>{language.name[0]}</span>}
+
+                            </div>
+
+                            <p>
+
+                                {language.name}
+
+                            </p>
 
                         </div>
 
-                        <h3>
+                    ))
 
-                            {language.time}
-
-                        </h3>
-
-                        <p>
-
-                            {language.name}
-
-                        </p>
-
-                    </div>
-
-                ))}
+                )}
 
             </div>
 

@@ -3,7 +3,7 @@ import WidgetFrame from "../../components/WidgetFrame.jsx";
 
 export default function PlatformPage() {
     return (
-        <WidgetFrame title="Platform Analyzer">
+        <WidgetFrame>
             <PlatformAnalyzerWidget />
         </WidgetFrame>
     );

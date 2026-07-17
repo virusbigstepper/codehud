@@ -7,7 +7,6 @@ class HeatmapService {
         this._saveTimer = null;
         this._initialized = false;
 
-        // Eagerly load from localStorage for browser
         if (!this.isElectron()) {
 
             const raw = localStorage.getItem("heatmapData");
@@ -46,7 +45,6 @@ class HeatmapService {
 
             }
 
-            // Listen for batched file changes
             window.electronAPI.onFileChanged((batch) => {
 
                 const count = batch.count || 0;
@@ -58,7 +56,6 @@ class HeatmapService {
 
             });
 
-            // Listen for coding ticks
             window.electronAPI.onCodingTick((data) => {
 
                 this.recordActivity(0, data.minutes);
@@ -150,7 +147,6 @@ class HeatmapService {
 
         }
 
-        // Calculate current streak from today backwards
         let streak = 0;
         const today = new Date();
 
@@ -166,7 +162,6 @@ class HeatmapService {
 
             } else if (i === 0) {
 
-                // Today has no activity yet, that's ok
                 continue;
 
             } else {
@@ -177,11 +172,24 @@ class HeatmapService {
 
         }
 
+        const previousStreak = this.data.currentStreak;
         this.data.currentStreak = streak;
 
         if (streak > this.data.bestStreak) {
 
             this.data.bestStreak = streak;
+
+        }
+
+        const milestones = [7, 14, 30, 60, 100, 200, 365];
+
+        if (streak !== previousStreak && milestones.includes(streak)) {
+
+            if (window.electronAPI && window.electronAPI.notifyStreak) {
+
+                window.electronAPI.notifyStreak(streak);
+
+            }
 
         }
 
@@ -195,7 +203,6 @@ class HeatmapService {
             year: "numeric"
         });
 
-        // Build heatmap array for current month (activity levels 0-4)
         const year = today.getFullYear();
         const month = today.getMonth();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -224,7 +231,6 @@ class HeatmapService {
 
         }
 
-        // Count total files changed this month
         let monthlyFilesChanged = 0;
 
         Object.entries(this.data.dailyActivity).forEach(

@@ -2,8 +2,6 @@ class SettingsService {
 
     constructor() {
 
-        // Eagerly load from localStorage for instant sync access
-        // initialize() will override this with Electron data if needed
         if (!this.isElectron()) {
 
             const raw = localStorage.getItem("settings");
@@ -99,6 +97,14 @@ class SettingsService {
             showCodingTracker: true,
             showPlatformAnalyzer: true,
             showHeatmap: true,
+
+            startupWidgets: {
+                analytics: false,
+                task: false,
+                coding: false,
+                platform: false,
+                heatmap: false
+            },
 
             theme: "dark",
 

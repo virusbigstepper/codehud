@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -6,11 +6,13 @@ import { createTray } from "./tray.js";
 import { openWidget } from "./windowManager.js";
 import StorageManager from "./storageManager.js";
 import FileWatcher from "./fileWatcher.js";
+import NotificationManager from "./notificationManager.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let mainWindow;
+let isQuitting = false;
 
 function createWindow() {
 
@@ -26,13 +28,40 @@ function createWindow() {
     });
 
     mainWindow.loadURL("http://localhost:5173");
+
+    mainWindow.on("close", (e) => {
+
+        if (!isQuitting) {
+
+            e.preventDefault();
+            mainWindow.hide();
+
+        }
+
+    });
+
 }
 
-// Register all IPC handlers immediately (before window loads)
+export function quitApp() {
+
+    isQuitting = true;
+    app.quit();
+
+}
+
 function registerIpcHandlers() {
 
     ipcMain.on("open-widget", (_, name) => {
         openWidget(name);
+    });
+
+    ipcMain.on("tasks-changed", (event) => {
+        const senderWebContents = event.sender;
+        BrowserWindow.getAllWindows().forEach(win => {
+            if (win.webContents !== senderWebContents && !win.isDestroyed()) {
+                win.webContents.send("tasks-updated");
+            }
+        });
     });
 
     ipcMain.handle(
@@ -65,6 +94,40 @@ function registerIpcHandlers() {
 
     ipcMain.on("update-tracked-folder", (_, folder) => {
         FileWatcher.updateTrackedFolder(folder);
+    });
+
+    ipcMain.handle("browse-folder", async () => {
+        const result = await dialog.showOpenDialog({
+            properties: ["openDirectory"],
+            title: "Select Tracked Folder"
+        });
+        if (result.canceled || result.filePaths.length === 0) {
+            return null;
+        }
+        return result.filePaths[0];
+    });
+
+    ipcMain.on("set-launch-on-startup", (_, enabled) => {
+        app.setLoginItemSettings({
+            openAtLogin: enabled,
+            path: process.execPath
+        });
+    });
+
+    ipcMain.on("send-notification", (_, { title, body }) => {
+        NotificationManager.send(title, body);
+    });
+
+    ipcMain.on("notify-streak", (_, days) => {
+        NotificationManager.streakMilestone(days);
+    });
+
+    ipcMain.on("notify-task-reminder", (_, taskTitle) => {
+        NotificationManager.taskReminder(taskTitle);
+    });
+
+    ipcMain.on("notify-session-summary", (_, { minutes, filesChanged }) => {
+        NotificationManager.sessionSummary(minutes, filesChanged);
     });
 
     ipcMain.handle("fetch-leetcode", async (_, username) => {
@@ -150,14 +213,46 @@ function registerIpcHandlers() {
 
 app.whenReady().then(() => {
 
-    // Register handlers FIRST, before any window loads
     registerIpcHandlers();
 
     createWindow();
 
     createTray(mainWindow);
 
-    // Start file system monitoring
     FileWatcher.start(mainWindow);
+
+    const settings = StorageManager.load("settings.json");
+
+    if (settings && settings.startupWidgets) {
+
+        setTimeout(() => {
+
+            for (const [name, enabled] of Object.entries(settings.startupWidgets)) {
+
+                
+
+                if (enabled) {
+                    openWidget(name);
+                }
+
+            }
+
+        }, 1500);
+
+    }
+
+});
+
+app.on("window-all-closed", (e) => {
+
+    if (!isQuitting) {
+        e.preventDefault();
+    }
+
+});
+
+app.on("before-quit", () => {
+
+    isQuitting = true;
 
 });

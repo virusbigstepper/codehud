@@ -3,7 +3,7 @@ import WidgetFrame from "../../components/WidgetFrame.jsx";
 
 export default function AnalyticsPage() {
     return (
-        <WidgetFrame title="Analytics">
+        <WidgetFrame>
             <AnalyticsWidget />
         </WidgetFrame>
     );

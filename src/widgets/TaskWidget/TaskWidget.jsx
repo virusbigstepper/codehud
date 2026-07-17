@@ -80,14 +80,6 @@ const TaskWidget = () => {
 
                 </h2>
 
-                <button className="task-add-icon" 
-                    onClick={() => handleAddTask()}
-                >
-
-                    <FiPlus />
-
-                </button>
-
             </div>
 
 

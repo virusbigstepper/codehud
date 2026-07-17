@@ -11,60 +11,68 @@ const widgetWindows = {};
 const widgetConfig = {
 
     analytics: {
-        width: 500,
-        height: 270,
-        minWidth: 350,
+        width: 380,
+        height: 220,
+        minWidth: 340,
         minHeight: 200,
+        maxWidth: 500,
+        maxHeight: 280,
         route: "/widget/analytics",
         title: "Analytics"
     },
 
     task: {
-        width: 360,
-        height: 720,
-        minWidth: 300,
+        width: 300,
+        height: 500,
+        minWidth: 280,
         minHeight: 400,
+        maxWidth: 400,
+        maxHeight: 700,
         route: "/widget/task",
         title: "Tasks"
     },
 
     coding: {
-        width: 450,
-        height: 300,
-        minWidth: 350,
-        minHeight: 250,
+        width: 340,
+        height: 260,
+        minWidth: 300,
+        minHeight: 240,
+        maxWidth: 450,
+        maxHeight: 320,
         route: "/widget/coding",
         title: "Coding Tracker"
     },
 
     platform: {
-        width: 450,
-        height: 300,
-        minWidth: 350,
-        minHeight: 250,
+        width: 360,
+        height: 240,
+        minWidth: 320,
+        minHeight: 220,
+        maxWidth: 460,
+        maxHeight: 300,
         route: "/widget/platform",
         title: "Platform Analyzer"
     },
 
     heatmap: {
-        width: 450,
-        height: 300,
-        minWidth: 350,
-        minHeight: 250,
+        width: 380,
+        height: 260,
+        minWidth: 340,
+        minHeight: 240,
+        maxWidth: 500,
+        maxHeight: 320,
         route: "/widget/heatmap",
         title: "Heatmap"
     }
 
 };
 
-// Load saved positions/sizes from storage
 function loadWidgetLayouts() {
 
     return StorageManager.load("widgetLayouts.json") || {};
 
 }
 
-// Save positions/sizes to storage
 function saveWidgetLayouts(layouts) {
 
     StorageManager.save("widgetLayouts.json", layouts);
@@ -101,7 +109,6 @@ export function openWidget(name) {
 
     }
 
-    // If already open, just show and focus
     if (widgetWindows[name] && !widgetWindows[name].isDestroyed()) {
 
         widgetWindows[name].show();
@@ -110,29 +117,35 @@ export function openWidget(name) {
 
     }
 
-    // Load saved position/size or use defaults
     const layouts = loadWidgetLayouts();
     const saved = layouts[name];
 
+    const settings = StorageManager.load("settings.json");
+    const isGlass = settings?.theme === "glass";
+    const rememberPosition = settings?.rememberWidgetPosition !== false;
+
     const windowOptions = {
 
-        width: saved?.width || config.width,
-        height: saved?.height || config.height,
+        width: (rememberPosition && saved?.width) || config.width,
+        height: (rememberPosition && saved?.height) || config.height,
         minWidth: config.minWidth,
         minHeight: config.minHeight,
+        maxWidth: config.maxWidth,
+        maxHeight: config.maxHeight,
 
-        x: saved?.x,
-        y: saved?.y,
+        x: rememberPosition ? saved?.x : undefined,
+        y: rememberPosition ? saved?.y : undefined,
 
         frame: false,
         resizable: true,
-        alwaysOnTop: true,
+        alwaysOnTop: false,
         autoHideMenuBar: true,
         skipTaskbar: true,
 
         show: false,
 
-        transparent: false,
+        transparent: isGlass,
+        backgroundColor: isGlass ? "#00000000" : "#090909",
 
         webPreferences: {
             preload: path.join(__dirname, "preload.cjs"),
@@ -156,10 +169,11 @@ export function openWidget(name) {
 
     });
 
-    // Save position on move/resize (debounced)
     let saveTimer = null;
 
     const debouncedSave = () => {
+
+        if (!rememberPosition) return;
 
         if (saveTimer) clearTimeout(saveTimer);
 

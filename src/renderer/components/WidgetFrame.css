@@ -5,76 +5,46 @@
     flex-direction: column;
     position: relative;
     overflow: hidden;
-}
-
-.widget-titlebar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 28px;
-    min-height: 28px;
-    padding: 0 6px;
-    background: rgba(30, 30, 30, 0.9);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-}
-
-.widget-titlebar.visible {
-    opacity: 1;
-}
-
-.widget-drag-region {
-    flex: 1;
-    height: 100%;
-    display: flex;
-    align-items: center;
     -webkit-app-region: drag;
-    cursor: move;
 }
 
-.widget-title {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.5);
-    font-weight: 500;
-    user-select: none;
-    pointer-events: none;
-}
-
-.widget-close-btn {
-    -webkit-app-region: no-drag;
-    width: 22px;
-    height: 22px;
-    border: none;
+[data-theme="glass"] .widget-frame {
     background: transparent;
-    color: rgba(255, 255, 255, 0.4);
-    font-size: 12px;
-    cursor: pointer;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s ease;
-}
-
-.widget-close-btn:hover {
-    background: rgba(255, 70, 70, 0.8);
-    color: white;
 }
 
 .widget-content {
     flex: 1;
-    overflow: auto;
+    overflow: hidden;
+    -webkit-app-region: drag;
 }
 
-/* Override widget card styles when in standalone window */
+.widget-content input,
+.widget-content button,
+.widget-content select,
+.widget-content textarea,
+.widget-content a,
+.widget-content [role="button"],
+.widget-content label,
+.widget-content .tasks-container {
+    -webkit-app-region: no-drag;
+}
+
 .widget-content > .analytics-widget,
 .widget-content > .task-widget,
 .widget-content > .coding-widget,
 .widget-content > .platform-widget,
 .widget-content > .heatmap-widget {
-    border-radius: 0;
+    border-radius: 12px;
     border: none;
     height: 100%;
 }
 
+[data-theme="glass"] .widget-content > .analytics-widget,
+[data-theme="glass"] .widget-content > .task-widget,
+[data-theme="glass"] .widget-content > .coding-widget,
+[data-theme="glass"] .widget-content > .platform-widget,
+[data-theme="glass"] .widget-content > .heatmap-widget {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}

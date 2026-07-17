@@ -1,5 +1,6 @@
 import chokidar from "chokidar";
 import path from "path";
+import { BrowserWindow } from "electron";
 import StorageManager from "./storageManager.js";
 
 class FileWatcher {
@@ -14,7 +15,6 @@ class FileWatcher {
 
         this.sessionTimer = null;
 
-        // Throttle: batch events and send periodically
         this.pendingEvents = [];
 
         this.flushTimer = null;
@@ -27,9 +27,10 @@ class FileWatcher {
 
         this.mainWindow = mainWindow;
 
-        // Load tracked folder from settings
         const settings = StorageManager.load("settings.json");
         this.trackedFolder = settings?.trackedFolder || "C:\\Code";
+
+        console.log(`[FileWatcher] Watching: ${this.trackedFolder}`);
 
         this.startWatching();
         this.startCodingSession();
@@ -84,15 +85,13 @@ class FileWatcher {
 
             ignoreInitial: true,
 
-            // Only watch 3 levels deep to avoid memory explosion
             depth: 3,
 
-            // Use polling with longer interval to reduce CPU/memory
             usePolling: false,
 
             awaitWriteFinish: {
-                stabilityThreshold: 500,
-                pollInterval: 200
+                stabilityThreshold: 200,
+                pollInterval: 100
             }
 
         });
@@ -109,17 +108,17 @@ class FileWatcher {
 
         });
 
-        // Start the flush timer
         this.startFlushTimer();
 
     }
 
     queueEvent(filePath, eventType) {
 
-        // Only track code files
         const language = this.detectLanguage(filePath);
 
         if (language === "Other") return;
+
+        this.lastActivityTime = Date.now();
 
         this.pendingEvents.push({
             filePath,
@@ -158,9 +157,6 @@ class FileWatcher {
 
         if (this.pendingEvents.length === 0) return;
 
-        if (!this.mainWindow || this.mainWindow.isDestroyed()) return;
-
-        // Deduplicate: only count each file once per flush
         const uniqueFiles = new Map();
 
         for (const event of this.pendingEvents) {
@@ -171,14 +167,16 @@ class FileWatcher {
 
         const events = Array.from(uniqueFiles.values());
 
-        // Send a single batched event to renderer
-        this.mainWindow.webContents.send(
-            "file-changed",
-            {
-                files: events,
-                count: events.length
+        const payload = {
+            files: events,
+            count: events.length
+        };
+
+        BrowserWindow.getAllWindows().forEach(win => {
+            if (!win.isDestroyed()) {
+                win.webContents.send("file-changed", payload);
             }
-        );
+        });
 
         this.pendingEvents = [];
 
@@ -224,15 +222,17 @@ class FileWatcher {
 
     startCodingSession() {
 
-        // Send a coding-minute tick every 60 seconds
+        this.lastActivityTime = null;
+
         this.sessionTimer = setInterval(() => {
 
-            if (this.mainWindow && !this.mainWindow.isDestroyed()) {
+            if (this.lastActivityTime && (Date.now() - this.lastActivityTime) < 120000) {
 
-                this.mainWindow.webContents.send(
-                    "coding-tick",
-                    { minutes: 1, timestamp: Date.now() }
-                );
+                BrowserWindow.getAllWindows().forEach(win => {
+                    if (!win.isDestroyed()) {
+                        win.webContents.send("coding-tick", { minutes: 1, timestamp: Date.now() });
+                    }
+                });
 
             }
 

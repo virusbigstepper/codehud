@@ -3,7 +3,7 @@ import WidgetFrame from "../../components/WidgetFrame.jsx";
 
 export default function HeatmapPage() {
     return (
-        <WidgetFrame title="Heatmap">
+        <WidgetFrame>
             <HeatmapWidget />
         </WidgetFrame>
     );

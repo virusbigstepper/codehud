@@ -3,7 +3,7 @@ import WidgetFrame from "../../components/WidgetFrame.jsx";
 
 export default function TaskPage() {
     return (
-        <WidgetFrame title="Tasks">
+        <WidgetFrame>
             <TaskWidget />
         </WidgetFrame>
     );

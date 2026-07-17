@@ -32,32 +32,65 @@ contextBridge.exposeInMainWorld("electronAPI", {
             fileName
         ),
 
-    // File watcher events - use removeAllListeners to prevent duplicates
     onFileChanged: (callback) => {
-        ipcRenderer.removeAllListeners("file-changed");
         ipcRenderer.on("file-changed", (_, event) => {
             callback(event);
         });
     },
 
     onCodingTick: (callback) => {
-        ipcRenderer.removeAllListeners("coding-tick");
         ipcRenderer.on("coding-tick", (_, data) => {
             callback(data);
         });
     },
 
-    // Update tracked folder
+    broadcastTasksChanged: () => {
+        ipcRenderer.send("tasks-changed");
+    },
+
+    onTasksUpdated: (callback) => {
+        ipcRenderer.removeAllListeners("tasks-updated");
+        ipcRenderer.on("tasks-updated", () => {
+            callback();
+        });
+    },
+
     updateTrackedFolder: (folder) =>
         ipcRenderer.send(
             "update-tracked-folder",
             folder
         ),
 
-    // LeetCode fetch (bypasses CORS via main process)
+    browseFolder: () =>
+        ipcRenderer.invoke("browse-folder"),
+
     fetchLeetcode: (username) =>
         ipcRenderer.invoke(
             "fetch-leetcode",
             username
+        ),
+
+    setLaunchOnStartup: (enabled) =>
+        ipcRenderer.send(
+            "set-launch-on-startup",
+            enabled
+        ),
+
+    sendNotification: (title, body) =>
+        ipcRenderer.send(
+            "send-notification",
+            { title, body }
+        ),
+
+    notifyStreak: (days) =>
+        ipcRenderer.send("notify-streak", days),
+
+    notifyTaskReminder: (taskTitle) =>
+        ipcRenderer.send("notify-task-reminder", taskTitle),
+
+    notifySessionSummary: (minutes, filesChanged) =>
+        ipcRenderer.send(
+            "notify-session-summary",
+            { minutes, filesChanged }
         )
 });

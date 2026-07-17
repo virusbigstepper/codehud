@@ -12,14 +12,12 @@ const AnalyticsWidget = () => {
 
     useEffect(() => {
 
-        // Load platform stats once (async API call)
         AnalyticsServices.loadPlatformStats().then(() => {
 
             setStats(AnalyticsServices.getDashboardStats());
 
         });
 
-        // Subscribe to local data changes for live updates
         const updateStats = () => {
 
             setStats(AnalyticsServices.getDashboardStats());

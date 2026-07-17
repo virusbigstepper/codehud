@@ -3,11 +3,11 @@
     width:100%;
     height:100%;
 
-    background:#090909;
+    background:var(--bg-secondary, #090909);
 
     border-radius:24px;
 
-    border:1px solid rgba(255,255,255,.08);
+    border:1px solid var(--border-color, rgba(255,255,255,.08));
 
     padding:22px;
 
@@ -16,12 +16,10 @@
 
     box-sizing:border-box;
 
-    color:white;
+    color:var(--text-primary, white);
 
     overflow:hidden;
 }
-
-/* ---------------- HEADER ---------------- */
 
 .task-header{
 
@@ -76,8 +74,6 @@
     border-color:white;
 }
 
-/* ---------------- TASK LIST ---------------- */
-
 .tasks-container{
 
     flex:1;
@@ -102,8 +98,6 @@
 
     border-radius:999px;
 }
-
-/* ---------------- TASK CARD ---------------- */
 
 .task-card{
 
@@ -157,8 +151,6 @@
 
     background:#16db55;
 }
-
-/* ---------------- MAIN ---------------- */
 
 .task-main{
 
@@ -231,8 +223,6 @@
     color:#ff3838;
 }
 
-/* ---------------- PRIORITY COLORS ---------------- */
-
 .priority-high{
 
     color:#ff4242;
@@ -247,8 +237,6 @@
 
     color:#16db55;
 }
-
-/* ---------------- META ---------------- */
 
 .task-meta{
 
@@ -306,8 +294,6 @@
     font-size:14px;
 }
 
-/* ---------------- CONTROLS ---------------- */
-
 .controls{
 
     display:flex;
@@ -352,8 +338,6 @@
     border-color:#2c7df0;
 }
 
-/* ---------------- SELECT ---------------- */
-
 .priority-select{
 
     width:100%;
@@ -385,8 +369,6 @@
 
     color:white;
 }
-
-/* ---------------- BUTTON ---------------- */
 
 .add-button{
 

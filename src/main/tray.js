@@ -1,10 +1,13 @@
-import { Tray, Menu } from "electron";
-import { toggleWidget, isOpen, getWidgetNames, closeAllWidgets } from "./windowManager.js";
+import { Tray, Menu, app } from "electron";
+import { toggleWidget, isOpen, closeAllWidgets } from "./windowManager.js";
 import path from "path";
 
 let tray = null;
+let mainWindowRef = null;
 
 export function createTray(mainWindow) {
+
+    mainWindowRef = mainWindow;
 
     const iconPath = path.join(
         process.cwd(),
@@ -12,93 +15,106 @@ export function createTray(mainWindow) {
         "codehud.png"
     );
 
-    tray = new Tray(iconPath);
-
-    tray.on("click", () => {
-        mainWindow.show();
-        mainWindow.focus();
-    });
-
-    buildMenu(mainWindow);
+    try {
+        tray = new Tray(iconPath);
+    } catch (e) {
+        console.error("Failed to create tray:", e);
+        return;
+    }
 
     tray.setToolTip("CodeHUD");
 
+    setTrayMenu();
+
+    tray.on("click", () => {
+        if (mainWindowRef && !mainWindowRef.isDestroyed()) {
+            mainWindowRef.show();
+            mainWindowRef.focus();
+        }
+    });
+
+    tray.on("right-click", () => {
+        setTrayMenu();
+    });
+
 }
 
-function buildMenu(mainWindow) {
+function setTrayMenu() {
 
-    const widgetNames = getWidgetNames();
+    if (!tray) return;
 
-    const widgetLabels = {
-        analytics: "Analytics",
-        task: "Tasks",
-        coding: "Coding Tracker",
-        platform: "Platform Analyzer",
-        heatmap: "Heatmap"
-    };
+    let analyticsOpen = false;
+    let taskOpen = false;
+    let codingOpen = false;
+    let platformOpen = false;
+    let heatmapOpen = false;
 
-    const widgetItems = widgetNames.map(name => ({
-
-        label: widgetLabels[name] || name,
-        type: "checkbox",
-        checked: isOpen(name),
-        click: () => {
-
-            toggleWidget(name);
-
-            // Rebuild menu after toggle to update checkbox state
-            setTimeout(() => buildMenu(mainWindow), 200);
-
-        }
-
-    }));
+    try {
+        analyticsOpen = isOpen("analytics");
+        taskOpen = isOpen("task");
+        codingOpen = isOpen("coding");
+        platformOpen = isOpen("platform");
+        heatmapOpen = isOpen("heatmap");
+    } catch (e) {
+    }
 
     const contextMenu = Menu.buildFromTemplate([
         {
             label: "Open Dashboard",
             click: () => {
-                mainWindow.show();
-                mainWindow.focus();
+                if (mainWindowRef && !mainWindowRef.isDestroyed()) {
+                    mainWindowRef.show();
+                    mainWindowRef.focus();
+                }
             }
         },
+        { type: "separator" },
+        
         {
-            type: "separator"
+            label: "Analytics",
+            type: "checkbox",
+            checked: analyticsOpen,
+            click: () => { toggleWidget("analytics"); }
         },
         {
-            label: "Widgets",
-            enabled: false
+            label: "Tasks",
+            type: "checkbox",
+            checked: taskOpen,
+            click: () => { toggleWidget("task"); }
         },
-        ...widgetItems,
         {
-            type: "separator"
+            label: "Coding Tracker",
+            type: "checkbox",
+            checked: codingOpen,
+            click: () => { toggleWidget("coding"); }
         },
+        {
+            label: "Platform Analyzer",
+            type: "checkbox",
+            checked: platformOpen,
+            click: () => { toggleWidget("platform"); }
+        },
+        {
+            label: "Heatmap",
+            type: "checkbox",
+            checked: heatmapOpen,
+            click: () => { toggleWidget("heatmap"); }
+        },
+        { type: "separator" },
         {
             label: "Close All Widgets",
-            click: () => {
-
-                closeAllWidgets();
-                setTimeout(() => buildMenu(mainWindow), 200);
-
-            }
+            click: () => { closeAllWidgets(); }
         },
+        { type: "separator" },
         {
-            type: "separator"
-        },
-        {
-            label: "Quit",
+            label: "Quit CodeHUD",
             click: () => {
                 closeAllWidgets();
-                mainWindow.destroy();
+                app.exit(0);
             }
         }
     ]);
 
     tray.setContextMenu(contextMenu);
-
-}
-
-export function refreshTrayMenu(mainWindow) {
-
-    buildMenu(mainWindow);
 
 }

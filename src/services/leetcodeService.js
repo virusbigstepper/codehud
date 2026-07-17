@@ -19,7 +19,6 @@ class LeetcodeService {
 
         }
 
-        // In Electron, use IPC to fetch from main process (avoids CORS)
         if (window.electronAPI && window.electronAPI.fetchLeetcode) {
 
             try {
@@ -41,7 +40,6 @@ class LeetcodeService {
 
         }
 
-        // Browser fallback: direct fetch (may be blocked by CORS)
         return await this.fetchDirect(username);
 
     }

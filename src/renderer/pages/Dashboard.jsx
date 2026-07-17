@@ -4,7 +4,6 @@ import "./dashboard.css";
 import SettingsService from "../../services/settingsService";
 import SettingsModal from "../components/SettingsModal";
 
-// Embedded widgets for browser mode
 import TaskWidget from "../../widgets/TaskWidget/TaskWidget.jsx";
 import CodingTrackerWidget from "../../widgets/CodingTrackerWidget/tracker.jsx";
 import AnalyticsWidget from "../../widgets/AnalyticsWidget/analytics.jsx";
@@ -47,7 +46,6 @@ const Dashboard = () => {
 
     };
 
-    // In Electron: show launcher cards
     if (isElectron) {
 
         return (
@@ -108,9 +106,7 @@ const Dashboard = () => {
                     <SettingsModal
                         onClose={() => {
                             setShowSettings(false);
-                            setSettings(
-                                SettingsService.getSettings()
-                            );
+                            setSettings(SettingsService.getSettings());
                         }}
                     />
                 )}
@@ -119,7 +115,6 @@ const Dashboard = () => {
 
     }
 
-    // In browser: show embedded widgets (original layout)
     return (
         <>
             <div className="dashboard">
@@ -159,9 +154,7 @@ const Dashboard = () => {
                 <SettingsModal
                     onClose={() => {
                         setShowSettings(false);
-                        setSettings(
-                            SettingsService.getSettings()
-                        );
+                        setSettings(SettingsService.getSettings());
                     }}
                 />
             )}
