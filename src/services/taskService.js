@@ -4,15 +4,16 @@ const storage = new StorageService();
 
 class TaskService {
 
-    constructor(storageService) {
+    constructor() {
 
-        this.storage = storageService;
+        this.tasks = [];
 
-        this.tasks =
-            this.storage.loadData("tasks") || [];
+    }
 
-        this.migrateTasks();
-
+    async initialize(){
+        this.tasks = await window
+        .electronAPI
+        .loadData("tasks.json") || [];
     }
 
     migrateTasks() {
