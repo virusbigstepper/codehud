@@ -1,9 +1,27 @@
+import { useState, useEffect } from "react";
 import "./analytics.css";
 import AnalyticsServices from "../../services/analyticsService";
+import taskService from "../../services/taskService";
 
 const AnalyticsWidget = () => {
 
-    const stats = AnalyticsServices.getDashboardStats();
+    const [stats, setStats] = useState(
+        AnalyticsServices.getDashboardStats()
+    );
+
+    useEffect(() => {
+
+        const updateStats = () => {
+
+            setStats(AnalyticsServices.getDashboardStats());
+
+        };
+
+        const unsubscribe = taskService.subscribe(updateStats);
+
+        return () => unsubscribe();
+
+    }, []);
 
     return (
 

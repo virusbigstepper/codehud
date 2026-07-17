@@ -1,19 +1,39 @@
-import StorageService from "./storageService.js";
-
-const storage = new StorageService();
-
 class TaskService {
 
     constructor() {
 
         this.tasks = [];
 
+        this.listeners = [];
+
     }
 
-    async initialize(){
-        this.tasks = await window
-        .electronAPI
-        .loadData("tasks.json") || [];
+    isElectron() {
+
+        return window.electronAPI !== undefined;
+
+    }
+
+    async initialize() {
+
+        if (this.isElectron()) {
+
+            const data = await window
+                .electronAPI
+                .load("tasks.json");
+
+            this.tasks = data || [];
+
+        } else {
+
+            const raw = localStorage.getItem("tasks.json");
+
+            this.tasks = raw ? JSON.parse(raw) : [];
+
+        }
+
+        this.migrateTasks();
+
     }
 
     migrateTasks() {
@@ -70,6 +90,8 @@ class TaskService {
 
         this.saveTasks();
 
+        this.notifyListeners();
+
     }
 
     removeTask(id) {
@@ -81,6 +103,8 @@ class TaskService {
         );
 
         this.saveTasks();
+
+        this.notifyListeners();
 
     }
 
@@ -98,6 +122,8 @@ class TaskService {
 
         this.saveTasks();
 
+        this.notifyListeners();
+
     }
 
     getTasks() {
@@ -108,13 +134,27 @@ class TaskService {
 
     saveTasks() {
 
-        this.storage.saveData(
+        if (this.isElectron()) {
 
-            "tasks",
+            window.electronAPI.save(
 
-            this.tasks
+                "tasks.json",
 
-        );
+                this.tasks
+
+            );
+
+        } else {
+
+            localStorage.setItem(
+
+                "tasks.json",
+
+                JSON.stringify(this.tasks)
+
+            );
+
+        }
 
     }
 
@@ -156,6 +196,28 @@ class TaskService {
 
     }
 
+    subscribe(listener) {
+
+        this.listeners.push(listener);
+
+        return () => {
+
+            this.listeners = this.listeners.filter(
+
+                l => l !== listener
+
+            );
+
+        };
+
+    }
+
+    notifyListeners() {
+
+        this.listeners.forEach(listener => listener());
+
+    }
+
 }
 
-export default new TaskService(storage);
+export default new TaskService();

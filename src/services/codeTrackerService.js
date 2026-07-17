@@ -2,9 +2,71 @@ class CodeTrackerService {
 
     constructor() {
 
-        this.stats = JSON.parse(
-            localStorage.getItem("codingStats")
-        ) || {
+        this.stats = this.getDefaultStats();
+        this.listeners = [];
+
+        // Eagerly load from localStorage for browser
+        if (!this.isElectron()) {
+
+            const raw = localStorage.getItem("codingStats");
+            const saved = raw ? JSON.parse(raw) : null;
+
+            if (saved) {
+
+                this.stats = { ...this.getDefaultStats(), ...saved };
+
+            }
+
+            // Handle old structure missing languageMinutes
+            if (!this.stats.languageMinutes) {
+
+                this.stats.languageMinutes =
+                    this.getDefaultLanguages();
+
+                this.save();
+
+            }
+
+        }
+
+    }
+
+    isElectron() {
+
+        return window.electronAPI !== undefined;
+
+    }
+
+    async initialize() {
+
+        if (this.isElectron()) {
+
+            const saved = await window.electronAPI.load(
+                "codingStats.json"
+            );
+
+            if (saved) {
+
+                this.stats = { ...this.getDefaultStats(), ...saved };
+
+            }
+
+            if (!this.stats.languageMinutes) {
+
+                this.stats.languageMinutes =
+                    this.getDefaultLanguages();
+
+                this.save();
+
+            }
+
+        }
+
+    }
+
+    getDefaultStats() {
+
+        return {
 
             codingTimeMinutes: 0,
 
@@ -16,26 +78,17 @@ class CodeTrackerService {
 
         };
 
-        // Handle old localStorage structure
-        if (!this.stats.languageMinutes) {
-
-            this.stats.languageMinutes =
-                this.getDefaultLanguages();
-
-            this.save();
-        }
-
     }
 
     getDefaultLanguages() {
 
         return {
 
-            React: 80,
-            JavaScript: 65,
-            Python: 45,
-            TypeScript: 20,
-            "C++": 15
+            React: 0,
+            JavaScript: 0,
+            Python: 0,
+            TypeScript: 0,
+            "C++": 0
 
         };
 
@@ -43,10 +96,23 @@ class CodeTrackerService {
 
     save() {
 
-        localStorage.setItem(
-            "codingStats",
-            JSON.stringify(this.stats)
-        );
+        if (this.isElectron()) {
+
+            window.electronAPI.save(
+                "codingStats.json",
+                this.stats
+            );
+
+        } else {
+
+            localStorage.setItem(
+                "codingStats",
+                JSON.stringify(this.stats)
+            );
+
+        }
+
+        this.notifyListeners();
 
     }
 
@@ -170,20 +236,29 @@ class CodeTrackerService {
 
     resetStats() {
 
-        this.stats = {
+        this.stats = this.getDefaultStats();
 
-            codingTimeMinutes: 0,
+        this.save();
 
-            yesterdayCodingMinutes: 0,
+    }
 
-            filesChanged: 0,
+    subscribe(listener) {
 
-            languageMinutes:
-                this.getDefaultLanguages()
+        this.listeners.push(listener);
+
+        return () => {
+
+            this.listeners = this.listeners.filter(
+                l => l !== listener
+            );
 
         };
 
-        this.save();
+    }
+
+    notifyListeners() {
+
+        this.listeners.forEach(listener => listener());
 
     }
 

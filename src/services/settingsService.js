@@ -1,18 +1,93 @@
 class SettingsService {
 
-    saveSettings(settings) {
-        localStorage.setItem(
-            "settings",
-            JSON.stringify(settings)
-        );
+    constructor() {
+
+        // Eagerly load from localStorage for instant sync access
+        // initialize() will override this with Electron data if needed
+        if (!this.isElectron()) {
+
+            const raw = localStorage.getItem("settings");
+            const saved = raw ? JSON.parse(raw) : null;
+
+            this._cached = {
+                ...this.getDefaults(),
+                ...saved
+            };
+
+        } else {
+
+            this._cached = this.getDefaults();
+
+        }
+
+    }
+
+    isElectron() {
+
+        return window.electronAPI !== undefined;
+
+    }
+
+    async initialize() {
+
+        const saved = await this.loadSettings();
+
+        this._cached = {
+            ...this.getDefaults(),
+            ...saved
+        };
+
+    }
+
+    async saveSettings(settings) {
+
+        this._cached = { ...settings };
+
+        if (this.isElectron()) {
+
+            await window.electronAPI.save(
+                "settings.json",
+                settings
+            );
+
+        } else {
+
+            localStorage.setItem(
+                "settings",
+                JSON.stringify(settings)
+            );
+
+        }
+
+    }
+
+    async loadSettings() {
+
+        if (this.isElectron()) {
+
+            return await window.electronAPI.load(
+                "settings.json"
+            );
+
+        } else {
+
+            const raw = localStorage.getItem("settings");
+            return raw ? JSON.parse(raw) : null;
+
+        }
+
     }
 
     getSettings() {
-        const saved = JSON.parse(
-            localStorage.getItem("settings")
-        );
 
-        return{
+        return { ...this._cached };
+
+    }
+
+    getDefaults() {
+
+        return {
+            displayName: "Developer",
             leetcodeUsername: "",
             codeforcesUsername: "",
             githubUsername: "",
@@ -22,20 +97,32 @@ class SettingsService {
             showTaskWidget: true,
             showCodingTracker: true,
             showPlatformAnalyzer: true,
-            showHeatmap : true,
+            showHeatmap: true,
 
             theme: "dark",
 
             launchOnStartup: false,
-            rememberWidgetPosition: true,
-
-            ...saved
+            rememberWidgetPosition: true
         };
+
     }
 
     clearSettings() {
-        localStorage.removeItem("settings");
+
+        this._cached = this.getDefaults();
+
+        if (this.isElectron()) {
+
+            window.electronAPI.deleteFile("settings.json");
+
+        } else {
+
+            localStorage.removeItem("settings");
+
+        }
+
     }
+
 }
 
 export default new SettingsService();

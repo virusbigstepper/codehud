@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiPlus, FiCalendar } from "react-icons/fi";
 import "./TaskWidget.css";
 import taskService from "../../services/taskService";
@@ -6,13 +6,25 @@ import { FiTrash2 } from "react-icons/fi";
 
 const TaskWidget = () => {
 
-    const [tasks, setTasks] = useState(
-        taskService.getTasks()
-    );
+    const [tasks, setTasks] = useState([]);
 
     const [input, setInput] = useState("");
 
     const [priority, setPriority] = useState("Low");
+
+    useEffect(() => {
+
+        const loadTasks = async () => {
+
+            await taskService.initialize();
+
+            setTasks(taskService.getTasks());
+
+        };
+
+        loadTasks();
+
+    }, []);
 
     const refreshTasks = () => {
 
@@ -65,6 +77,7 @@ const TaskWidget = () => {
     return (
 
         <div className="task-widget">
+        
 
 
             <div className="task-header">
