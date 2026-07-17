@@ -91,6 +91,7 @@ class SettingsService {
             leetcodeUsername: "",
             codeforcesUsername: "",
             githubUsername: "",
+            gfgUsername: "",
             trackedFolder: "C:\\Code",
 
             showAnalytics: true,

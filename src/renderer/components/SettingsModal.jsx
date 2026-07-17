@@ -17,6 +17,9 @@ const SettingsModal = ({ onClose }) => {
     const [githubUsername, setGithubUsername] =
         useState(currentSettings.githubUsername || "");
 
+    const [gfgUsername, setGfgUsername] =
+        useState(currentSettings.gfgUsername || "");
+
     const [trackedFolder, setTrackedFolder] =
         useState(currentSettings.trackedFolder || "C:\\Code");
 
@@ -27,6 +30,7 @@ const SettingsModal = ({ onClose }) => {
             leetcodeUsername,
             codeforcesUsername,
             githubUsername,
+            gfgUsername,
             trackedFolder,
 
             showAnalytics,
@@ -133,6 +137,15 @@ const SettingsModal = ({ onClose }) => {
                                 value={githubUsername}
                                 onChange={(e) =>
                                     setGithubUsername(e.target.value)
+                                }
+                            />
+
+                            <label>GeeksForGeeks</label>
+                            <input
+                                type="text"
+                                value={gfgUsername}
+                                onChange={(e) =>
+                                    setGfgUsername(e.target.value)
                                 }
                             />
 

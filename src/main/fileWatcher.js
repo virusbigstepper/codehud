@@ -12,14 +12,14 @@ class FileWatcher {
 
         this.trackedFolder = null;
 
-        this.sessionStartTime = null;
-
         this.sessionTimer = null;
 
-        // Debounce tracking: avoid duplicate events
-        this.recentChanges = new Map();
+        // Throttle: batch events and send periodically
+        this.pendingEvents = [];
 
-        this.DEBOUNCE_MS = 1000;
+        this.flushTimer = null;
+
+        this.FLUSH_INTERVAL_MS = 2000;
 
     }
 
@@ -46,6 +46,7 @@ class FileWatcher {
         }
 
         this.stopCodingSession();
+        this.stopFlushTimer();
 
     }
 
@@ -67,7 +68,12 @@ class FileWatcher {
             "**/target/**",
             "**/__pycache__/**",
             "**/*.lock",
-            "**/package-lock.json"
+            "**/package-lock.json",
+            "**/.next/**",
+            "**/.nuxt/**",
+            "**/coverage/**",
+            "**/.vscode/**",
+            "**/.idea/**"
         ];
 
         this.watcher = chokidar.watch(this.trackedFolder, {
@@ -78,82 +84,103 @@ class FileWatcher {
 
             ignoreInitial: true,
 
+            // Only watch 3 levels deep to avoid memory explosion
+            depth: 3,
+
+            // Use polling with longer interval to reduce CPU/memory
+            usePolling: false,
+
             awaitWriteFinish: {
-                stabilityThreshold: 300,
-                pollInterval: 100
+                stabilityThreshold: 500,
+                pollInterval: 200
             }
 
         });
 
         this.watcher.on("change", (filePath) => {
 
-            this.handleFileChange(filePath, "change");
+            this.queueEvent(filePath, "change");
 
         });
 
         this.watcher.on("add", (filePath) => {
 
-            this.handleFileChange(filePath, "add");
+            this.queueEvent(filePath, "add");
 
         });
 
-        this.watcher.on("unlink", (filePath) => {
+        // Start the flush timer
+        this.startFlushTimer();
 
-            this.handleFileChange(filePath, "unlink");
+    }
 
+    queueEvent(filePath, eventType) {
+
+        // Only track code files
+        const language = this.detectLanguage(filePath);
+
+        if (language === "Other") return;
+
+        this.pendingEvents.push({
+            filePath,
+            fileName: path.basename(filePath),
+            language,
+            eventType,
+            timestamp: Date.now()
         });
 
     }
 
-    handleFileChange(filePath, eventType) {
+    startFlushTimer() {
 
-        // Debounce: ignore duplicate events for same file within window
-        const now = Date.now();
-        const lastChange = this.recentChanges.get(filePath);
+        this.stopFlushTimer();
 
-        if (lastChange && (now - lastChange) < this.DEBOUNCE_MS) {
+        this.flushTimer = setInterval(() => {
 
-            return;
+            this.flushEvents();
+
+        }, this.FLUSH_INTERVAL_MS);
+
+    }
+
+    stopFlushTimer() {
+
+        if (this.flushTimer) {
+
+            clearInterval(this.flushTimer);
+            this.flushTimer = null;
 
         }
 
-        this.recentChanges.set(filePath, now);
+    }
 
-        // Clean old entries periodically
-        if (this.recentChanges.size > 500) {
+    flushEvents() {
 
-            for (const [key, time] of this.recentChanges) {
+        if (this.pendingEvents.length === 0) return;
 
-                if (now - time > 5000) {
+        if (!this.mainWindow || this.mainWindow.isDestroyed()) return;
 
-                    this.recentChanges.delete(key);
+        // Deduplicate: only count each file once per flush
+        const uniqueFiles = new Map();
 
-                }
+        for (const event of this.pendingEvents) {
 
+            uniqueFiles.set(event.filePath, event);
+
+        }
+
+        const events = Array.from(uniqueFiles.values());
+
+        // Send a single batched event to renderer
+        this.mainWindow.webContents.send(
+            "file-changed",
+            {
+                files: events,
+                count: events.length
             }
+        );
 
-        }
-
-        const language = this.detectLanguage(filePath);
-        const fileName = path.basename(filePath);
-
-        const event = {
-            filePath,
-            fileName,
-            language,
-            eventType,
-            timestamp: now
-        };
-
-        // Send to renderer
-        if (this.mainWindow && !this.mainWindow.isDestroyed()) {
-
-            this.mainWindow.webContents.send(
-                "file-changed",
-                event
-            );
-
-        }
+        this.pendingEvents = [];
 
     }
 
@@ -180,22 +207,14 @@ class FileWatcher {
             ".cs": "C#",
             ".swift": "Swift",
             ".kt": "Kotlin",
-            ".html": "HTML",
-            ".css": "CSS",
-            ".scss": "CSS",
-            ".less": "CSS",
-            ".json": "JSON",
-            ".yaml": "YAML",
-            ".yml": "YAML",
-            ".md": "Markdown",
-            ".sql": "SQL",
-            ".sh": "Shell",
-            ".bash": "Shell",
-            ".ps1": "PowerShell",
             ".vue": "Vue",
             ".svelte": "Svelte",
             ".dart": "Dart",
-            ".lua": "Lua"
+            ".lua": "Lua",
+            ".sql": "SQL",
+            ".sh": "Shell",
+            ".bash": "Shell",
+            ".ps1": "PowerShell"
 
         };
 
@@ -204,8 +223,6 @@ class FileWatcher {
     }
 
     startCodingSession() {
-
-        this.sessionStartTime = Date.now();
 
         // Send a coding-minute tick every 60 seconds
         this.sessionTimer = setInterval(() => {
@@ -219,7 +236,7 @@ class FileWatcher {
 
             }
 
-        }, 60000); // every 60 seconds
+        }, 60000);
 
     }
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "./analytics.css";
 import AnalyticsServices from "../../services/analyticsService";
 import taskService from "../../services/taskService";
+import codeTrackerService from "../../services/codeTrackerService";
 
 const AnalyticsWidget = () => {
 
@@ -11,15 +12,29 @@ const AnalyticsWidget = () => {
 
     useEffect(() => {
 
+        // Load platform stats once (async API call)
+        AnalyticsServices.loadPlatformStats().then(() => {
+
+            setStats(AnalyticsServices.getDashboardStats());
+
+        });
+
+        // Subscribe to local data changes for live updates
         const updateStats = () => {
 
             setStats(AnalyticsServices.getDashboardStats());
 
         };
 
-        const unsubscribe = taskService.subscribe(updateStats);
+        const unsubTask = taskService.subscribe(updateStats);
+        const unsubCode = codeTrackerService.subscribe(updateStats);
 
-        return () => unsubscribe();
+        return () => {
+
+            unsubTask();
+            unsubCode();
+
+        };
 
     }, []);
 
@@ -85,11 +100,11 @@ const AnalyticsWidget = () => {
                 <div className="improvement">
 
                     <h1>
-                        26%
-                        <span> ▲</span>
+                        {stats.filesChanged}
+                        <span> files</span>
                     </h1>
 
-                    <p>vs yesterday</p>
+                    <p>changed today</p>
 
                 </div>
 

@@ -1,53 +1,55 @@
 import "./analyzer.css";
 import PlatformAnalyzerService from "../../services/platformAnalyzerService.js";
-import SettingsService from "../../services/settingsService.js"
+import SettingsService from "../../services/settingsService.js";
 import { SiLeetcode, SiCodeforces, SiGeeksforgeeks } from "react-icons/si";
 import { FaGithub } from "react-icons/fa";
 import { useState, useEffect } from "react";
 
-
 const PlatformAnalyzerWidget = () => {
+
     const [stats, setStats] = useState(null);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
+
     const settings = SettingsService.getSettings();
-//     useEffect(() => {
-
-//     async function loadData() {
-
-//         const data =
-//             await PlatformAnalyzerService.getStats();
-
-//         console.log(data);
-
-//         setStats(data);
-//     }
-
-//     loadData();
-
-// }, []); // for some testing
-    const displayName =
-        settings.displayName || "Developer";
+    const displayName = settings.displayName || "Developer";
 
     useEffect(() => {
 
         async function loadData() {
 
-            const data =
-                await PlatformAnalyzerService.getStats();
+            setLoading(true);
+            setError(null);
+
+            const data = await PlatformAnalyzerService.getStats();
+
+            if (data.errors) {
+
+                setError(data.errors.join(", "));
+
+            }
 
             setStats(data);
+            setLoading(false);
+
         }
 
         loadData();
 
     }, []);
-    if (!stats) {
 
-    return (
-        <div className="platform-widget">
-            Loading...
-        </div>
-    );
-}
+    if (loading) {
+
+        return (
+            <div className="platform-widget">
+                <h1 className="platform-title">
+                    Hi, {displayName}
+                </h1>
+                <p className="platform-loading">Loading platforms...</p>
+            </div>
+        );
+
+    }
 
     const platforms = [
         {
@@ -79,6 +81,12 @@ const PlatformAnalyzerWidget = () => {
                 Hi, {displayName}
             </h1>
 
+            {error && (
+                <p className="platform-error">
+                    ⚠ {error}
+                </p>
+            )}
+
             <div className="platform-list">
 
                 {platforms.map((platform, index) => (
@@ -98,6 +106,7 @@ const PlatformAnalyzerWidget = () => {
 
         </div>
     );
+
 };
 
 export default PlatformAnalyzerWidget;

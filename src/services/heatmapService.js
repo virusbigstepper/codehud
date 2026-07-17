@@ -4,6 +4,8 @@ class HeatmapService {
 
         this.data = this.getDefaultData();
         this.listeners = [];
+        this._saveTimer = null;
+        this._initialized = false;
 
         // Eagerly load from localStorage for browser
         if (!this.isElectron()) {
@@ -29,6 +31,9 @@ class HeatmapService {
 
     async initialize() {
 
+        if (this._initialized) return;
+        this._initialized = true;
+
         if (this.isElectron()) {
 
             const saved = await window.electronAPI.load(
@@ -41,14 +46,19 @@ class HeatmapService {
 
             }
 
-            // Listen for file change events to auto-record activity
-            window.electronAPI.onFileChanged(() => {
+            // Listen for batched file changes
+            window.electronAPI.onFileChanged((batch) => {
 
-                this.recordActivity(1, 0);
+                const count = batch.count || 0;
+                if (count > 0) {
+
+                    this.recordActivity(count, 0);
+
+                }
 
             });
 
-            // Listen for coding ticks to record minutes
+            // Listen for coding ticks
             window.electronAPI.onCodingTick((data) => {
 
                 this.recordActivity(0, data.minutes);
@@ -64,7 +74,6 @@ class HeatmapService {
         return {
 
             dailyActivity: {},
-            // Format: { "2026-07-17": { filesChanged: 5, minutesCoded: 120 } }
 
             bestStreak: 0,
 
@@ -96,6 +105,19 @@ class HeatmapService {
 
     }
 
+    debouncedSave() {
+
+        if (this._saveTimer) return;
+
+        this._saveTimer = setTimeout(() => {
+
+            this._saveTimer = null;
+            this.save();
+
+        }, 1000);
+
+    }
+
     recordActivity(filesChanged = 0, minutesCoded = 0) {
 
         const today = new Date().toISOString().split("T")[0];
@@ -113,7 +135,7 @@ class HeatmapService {
         this.data.dailyActivity[today].minutesCoded += minutesCoded;
 
         this.updateStreaks();
-        this.save();
+        this.debouncedSave();
 
     }
 
@@ -191,7 +213,6 @@ class HeatmapService {
 
             } else {
 
-                // Map minutes coded to intensity level 1-4
                 const mins = activity.minutesCoded;
 
                 if (mins < 30) heatmap.push(1);

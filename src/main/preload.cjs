@@ -1,7 +1,5 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
-// console.log("PRELOAD LOADED");
-
 contextBridge.exposeInMainWorld("electronAPI", {
     openWidget: (name) =>
         ipcRenderer.send(
@@ -34,14 +32,16 @@ contextBridge.exposeInMainWorld("electronAPI", {
             fileName
         ),
 
-    // File watcher events
+    // File watcher events - use removeAllListeners to prevent duplicates
     onFileChanged: (callback) => {
+        ipcRenderer.removeAllListeners("file-changed");
         ipcRenderer.on("file-changed", (_, event) => {
             callback(event);
         });
     },
 
     onCodingTick: (callback) => {
+        ipcRenderer.removeAllListeners("coding-tick");
         ipcRenderer.on("coding-tick", (_, data) => {
             callback(data);
         });

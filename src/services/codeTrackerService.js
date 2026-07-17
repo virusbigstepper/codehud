@@ -4,6 +4,8 @@ class CodeTrackerService {
 
         this.stats = this.getDefaultStats();
         this.listeners = [];
+        this._saveTimer = null;
+        this._initialized = false;
 
         // Eagerly load from localStorage for browser
         if (!this.isElectron()) {
@@ -17,7 +19,6 @@ class CodeTrackerService {
 
             }
 
-            // Handle old structure missing languageMinutes
             if (!this.stats.languageMinutes) {
 
                 this.stats.languageMinutes =
@@ -38,6 +39,9 @@ class CodeTrackerService {
     }
 
     async initialize() {
+
+        if (this._initialized) return;
+        this._initialized = true;
 
         if (this.isElectron()) {
 
@@ -60,10 +64,10 @@ class CodeTrackerService {
 
             }
 
-            // Listen for file change events from main process
-            window.electronAPI.onFileChanged((event) => {
+            // Listen for batched file change events
+            window.electronAPI.onFileChanged((batch) => {
 
-                this.handleFileChange(event);
+                this.handleFileChangeBatch(batch);
 
             });
 
@@ -108,27 +112,33 @@ class CodeTrackerService {
 
     }
 
-    handleFileChange(event) {
+    handleFileChangeBatch(batch) {
 
-        // Increment file count
-        this.stats.filesChanged++;
+        // batch = { files: [...], count: N }
+        const files = batch.files || [];
 
-        // Track language minutes (1 min per file change as activity signal)
-        const language = event.language;
+        this.stats.filesChanged += files.length;
 
-        if (language && language !== "Other") {
+        // Accumulate language activity
+        for (const file of files) {
 
-            if (!this.stats.languageMinutes[language]) {
+            const language = file.language;
 
-                this.stats.languageMinutes[language] = 0;
+            if (language && language !== "Other") {
+
+                if (!this.stats.languageMinutes[language]) {
+
+                    this.stats.languageMinutes[language] = 0;
+
+                }
+
+                this.stats.languageMinutes[language] += 1;
 
             }
 
-            this.stats.languageMinutes[language] += 1;
-
         }
 
-        this.save();
+        this.debouncedSave();
 
     }
 
@@ -136,35 +146,21 @@ class CodeTrackerService {
 
         this.stats.codingTimeMinutes += data.minutes;
 
-        // Also add to top active language if we have recent activity
-        const topLang = this.getTopActiveLanguage();
-
-        if (topLang) {
-
-            if (!this.stats.languageMinutes[topLang]) {
-
-                this.stats.languageMinutes[topLang] = 0;
-
-            }
-
-            this.stats.languageMinutes[topLang] += data.minutes;
-
-        }
-
-        this.save();
+        this.debouncedSave();
 
     }
 
-    getTopActiveLanguage() {
+    debouncedSave() {
 
-        // Return the language with most minutes as proxy for current activity
-        const entries = Object.entries(this.stats.languageMinutes);
+        // Debounce saves to avoid hammering disk/IPC
+        if (this._saveTimer) return;
 
-        if (entries.length === 0) return null;
+        this._saveTimer = setTimeout(() => {
 
-        return entries.reduce((best, current) =>
-            current[1] > best[1] ? current : best
-        )[0];
+            this._saveTimer = null;
+            this.save();
+
+        }, 1000);
 
     }
 
