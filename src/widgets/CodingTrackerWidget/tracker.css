@@ -36,7 +36,7 @@
 
     margin:0;
 
-    color:#ffffff;
+    color:var(--text-primary, #ffffff);
 
     font-size:16px;
 
@@ -116,7 +116,7 @@
 
     margin:0;
 
-    color:white;
+    color:var(--text-primary, white);
 
     font-size:11px;
 

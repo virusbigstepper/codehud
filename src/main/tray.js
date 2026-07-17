@@ -1,6 +1,10 @@
 import { Tray, Menu, app } from "electron";
 import { toggleWidget, isOpen, closeAllWidgets } from "./windowManager.js";
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 let tray = null;
 let mainWindowRef = null;
@@ -9,11 +13,10 @@ export function createTray(mainWindow) {
 
     mainWindowRef = mainWindow;
 
-    const iconPath = path.join(
-        process.cwd(),
-        "public",
-        "codehud.png"
-    );
+    const isDev = !app.isPackaged;
+    const iconPath = isDev
+        ? path.join(process.cwd(), "public", "codehud.png")
+        : path.join(__dirname, "../../public/codehud.png");
 
     try {
         tray = new Tray(iconPath);

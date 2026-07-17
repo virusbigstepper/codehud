@@ -97,15 +97,7 @@ class CodeTrackerService {
 
     getDefaultLanguages() {
 
-        return {
-
-            React: 0,
-            JavaScript: 0,
-            Python: 0,
-            TypeScript: 0,
-            "C++": 0
-
-        };
+        return {};
 
     }
 
@@ -214,8 +206,8 @@ class CodeTrackerService {
         });
 
         const topLanguage =
-            languages.length
-                ? languages.reduce((best, current) =>
+            languages.filter(l => l.minutes > 0).length
+                ? languages.filter(l => l.minutes > 0).reduce((best, current) =>
 
                     current.minutes > best.minutes
                         ? current

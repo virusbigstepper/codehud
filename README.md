@@ -1,197 +1,184 @@
 # CodeHUD
 
-CodeHUD is a desktop productivity dashboard designed for developers. It combines task management, coding analytics, competitive programming statistics, and coding activity tracking into a single customizable workspace.
+CodeHUD is a desktop productivity dashboard for developers. It provides floating desktop widgets that track coding activity, tasks, competitive programming stats, and more.
 
-The project is currently built with React and is being migrated to Electron to support desktop widgets, system tray integration, startup services, and local file system monitoring.
+Built with React + Electron. Widgets live as independent frameless windows on your desktop — drag them anywhere, resize them, and they remember their position.
 
 ---
 
 ## Features
 
-### Task Management
+### Task Widget
+- Create, complete, and delete tasks
+- Priority levels (Low, Medium, High)
+- Persistent storage across sessions
+- Real-time sync with analytics
 
-* Create and manage tasks
-* Mark tasks as completed
-* Delete completed tasks
-* Track overall completion percentage
-* Persistent task storage
+### Analytics Widget
+- Total problems solved (aggregated from all platforms)
+- Task completion progress bar
+- Coding time today
+- Files changed count
 
-### Analytics Dashboard
+### Coding Tracker Widget
+- Tracks real coding time (only counts when files are actively being edited)
+- Detects languages automatically from file extensions
+- Shows top 5 most-used languages with icons
+- Files changed counter
 
-* Total problems solved
-* Coding activity statistics
-* Task completion analytics
-* Progress visualization
+### Heatmap Widget
+- Monthly activity heatmap built from real file monitoring data
+- Current and best coding streaks
+- Activity intensity levels
 
-### Coding Tracker
+### Platform Analyzer Widget
+- GitHub (public repos)
+- Codeforces (rating, rank, problems solved)
+- LeetCode (problems solved via GraphQL API)
+- GeeksForGeeks (problems solved via community API)
 
-* Track coding sessions
-* Track file modifications
-* Store coding statistics locally
-* Persistent activity data
-
-### Platform Analyzer
-
-* GitHub integration
-* Codeforces integration
-* Repository statistics
-* Rating tracking
-* Solved problem tracking
-
-### Settings System
-
-* Widget visibility controls
-* Platform username configuration
-* Display name customization
-* Theme preferences
-* Startup preferences
-* Persistent application settings
-
----
-
-## Current Integrations
-
-### GitHub
-
-* Public repository count
-* User profile statistics
-
-### Codeforces
-
-* Current rating
-* Rank
-* Solved problem count
-
-### LeetCode
-
-* Mock data (planned integration)
-
-### GeeksForGeeks
-
-* Mock data (planned integration)
+### System Features
+- System tray with widget toggles and quit
+- Close-to-tray (app stays running in background)
+- Startup widget selection (choose which widgets auto-open)
+- Launch on system startup
+- Remember widget positions
+- File system monitoring via chokidar
+- Cross-window real-time sync
+- Native notifications for streak milestones
+- Theme support (Dark, Light, Glass)
+- Browse folder picker for tracked directory
 
 ---
 
 ## Tech Stack
 
 ### Frontend
+- React 19
+- Vite 8
+- react-router-dom (HashRouter)
+- react-icons
+- CSS Variables (theming)
 
-* React
-* Vite
-* JavaScript
-* CSS
+### Desktop
+- Electron 42
+- electron-builder (NSIS installer)
+- chokidar (file system watching)
+- IPC for cross-window communication
 
-### Services
-
-* Local Storage
-* GitHub REST API
-* Codeforces API
-
-### Planned Desktop Stack
-
-* Electron
-* Node.js
-* System Tray APIs
-* File System Watchers
+### APIs
+- GitHub REST API
+- Codeforces API
+- LeetCode GraphQL API
+- GeeksForGeeks Stats API (community)
 
 ---
 
 ## Project Structure
 
-```text
-src
-├── main
-│   ├── main.js
-│   ├── tray.js
-│   └── windowManager.js
-│
-├── renderer
-│   ├── components
-│   ├── pages
-│   ├── styles
-│   └── App.jsx
-│
-├── services
-│   ├── analyticsService.js
-│   ├── codeTrackerService.js
-│   ├── codeforcesService.js
-│   ├── githubService.js
-│   ├── leetcodeService.js
-│   ├── platformAnalyzerService.js
-│   ├── settingsService.js
-│   ├── storageService.js
-│   └── taskService.js
-│
-└── widgets
-    ├── AnalyticsWidget
-    ├── CodingTrackerWidget
-    ├── PlatformAnalyzerWidget
-    └── TaskWidget
 ```
-
----
-
-## Roadmap
-
-### Phase 1 — Dashboard MVP
-
-* [x] Task widget
-* [x] Analytics widget
-* [x] Coding tracker
-* [x] Platform analyzer
-* [x] Settings persistence
-* [x] GitHub integration
-* [x] Codeforces integration
-
-### Phase 2 — Electron Migration
-
-* [ ] Electron wrapper
-* [ ] Native desktop window
-* [ ] System tray integration
-* [ ] Startup support
-
-### Phase 3 — Productivity Features
-
-* [ ] File system monitoring
-* [ ] Real coding activity tracking
-* [ ] Activity heatmaps
-* [ ] Native notifications
-
-### Phase 4 — Advanced Widgets
-
-* [ ] Draggable widgets
-* [ ] Resizable widgets
-* [ ] Multi-window widget mode
-* [ ] Saved layouts
-
-### Phase 5 — Platform Expansion
-
-* [ ] LeetCode integration
-* [ ] GeeksForGeeks integration
-* [ ] Contribution analytics
-* [ ] Competitive programming insights
+src/
+├── main/
+│   ├── main.js              # Electron entry, IPC handlers
+│   ├── preload.cjs          # Context bridge (renderer ↔ main)
+│   ├── windowManager.js     # Widget window lifecycle
+│   ├── tray.js              # System tray menu
+│   ├── fileWatcher.js       # Chokidar file monitoring
+│   ├── storageManager.js    # JSON file persistence
+│   └── notificationManager.js
+│
+├── renderer/
+│   ├── App.jsx              # Router + service initialization
+│   ├── main.jsx             # React entry
+│   ├── pages/
+│   │   ├── Dashboard.jsx    # Launcher (Electron) / embedded (browser)
+│   │   └── widgets/         # Standalone widget page wrappers
+│   ├── components/
+│   │   ├── WidgetFrame.jsx  # Frameless drag container
+│   │   └── SettingsModal.jsx
+│   └── styles/
+│       └── globals.css      # Theme variables
+│
+├── services/
+│   ├── taskService.js
+│   ├── codeTrackerService.js
+│   ├── heatmapService.js
+│   ├── settingsService.js
+│   ├── analyticsService.js
+│   ├── platformAnalyzerService.js
+│   ├── githubService.js
+│   ├── codeforcesService.js
+│   ├── leetcodeService.js
+│   └── gfgService.js
+│
+└── widgets/
+    ├── AnalyticsWidget/
+    ├── CodingTrackerWidget/
+    ├── HeatmapWidget/
+    ├── PlatformAnalyzerWidget/
+    └── TaskWidget/
+```
 
 ---
 
 ## Installation
 
+### Development
+
 ```bash
 git clone https://github.com/virusbigstepper/codehud.git
-
 cd codehud
-
 npm install
+```
 
+Run the React dev server:
+```bash
 npm run dev
 ```
 
+Run Electron (requires dev server running):
+```bash
+npm run electron
+```
+
+Or build + run Electron together:
+```bash
+npm run electron:dev
+```
+
+### Build Installer
+
+```bash
+npm run dist:win
+```
+
+Output goes to `release/` directory as an NSIS installer.
+
 ---
 
-## Vision
+## Usage
 
-CodeHUD aims to become a lightweight desktop companion for developers by combining productivity tracking, coding analytics, competitive programming statistics, and customizable desktop widgets into a single application.
+1. Launch CodeHUD — the dashboard opens
+2. Click widget cards to open them on your desktop
+3. Drag widgets anywhere, resize them
+4. Close the dashboard — it minimizes to system tray
+5. Right-click tray → toggle widgets, quit
+6. Settings → configure platforms, tracked folder, theme, startup widgets
 
-The long-term goal is to provide a developer-focused dashboard that lives on the desktop, launches automatically on startup, and gives instant visibility into coding activity, tasks, and progress across multiple platforms.
+---
 
-```
-```
+## Configuration
+
+Open Settings (⚙ button) to configure:
+
+- **Connections** — GitHub, Codeforces, LeetCode, GeeksForGeeks usernames
+- **Tracking** — Select which folder to monitor for coding activity
+- **Widgets** — Toggle visibility + auto-start on launch
+- **Appearance** — Dark / Light / Glass theme
+- **General** — Launch on startup, remember positions
+
+---
+
+## License
+
+MIT

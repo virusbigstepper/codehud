@@ -1,10 +1,12 @@
-import { BrowserWindow } from "electron";
+import { BrowserWindow, app } from "electron";
 import path from "path";
 import { fileURLToPath } from "url";
 import StorageManager from "./storageManager.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const isDev = !app.isPackaged;
 
 const widgetWindows = {};
 
@@ -159,9 +161,14 @@ export function openWidget(name) {
 
     const win = widgetWindows[name];
 
-    win.loadURL(
-        `http://localhost:5173${config.route}`
-    );
+    if (isDev) {
+        win.loadURL(`http://localhost:5173/#${config.route}`);
+    } else {
+        win.loadFile(
+            path.join(__dirname, "../../dist/index.html"),
+            { hash: config.route }
+        );
+    }
 
     win.once("ready-to-show", () => {
 

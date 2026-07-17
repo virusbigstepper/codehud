@@ -36,7 +36,7 @@
 
 .heatmap-month{
 
-    color:#ffffff;
+    color:var(--text-primary, #ffffff);
 
     font-size:20px;
 
@@ -173,7 +173,7 @@
 
     margin:0;
 
-    color:white;
+    color:var(--text-primary, white);
 
     font-size:clamp(28px, 5vw, 46px);
 
@@ -218,3 +218,18 @@
 
     box-shadow:0 0 10px rgba(76,255,105,.25);
 }
+
+
+[data-theme="light"] .heatmap-cell{
+    background:#e0e0e0;
+    border-color:rgba(0,0,0,.05);
+}
+
+[data-theme="light"] .level-0{ background:#e0e0e0; }
+[data-theme="light"] .level-1{ background:#9be9a8; }
+[data-theme="light"] .level-2{ background:#40c463; }
+[data-theme="light"] .level-3{ background:#30a14e; }
+[data-theme="light"] .level-4{ background:#216e39; }
+
+[data-theme="light"] .streak-box p{ color:#666; }
+[data-theme="light"] .heatmap-folder{ color:#666; }

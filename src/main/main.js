@@ -11,6 +11,8 @@ import NotificationManager from "./notificationManager.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const isDev = !app.isPackaged;
+
 let mainWindow;
 let isQuitting = false;
 
@@ -27,7 +29,11 @@ function createWindow() {
         }
     });
 
-    mainWindow.loadURL("http://localhost:5173");
+    if (isDev) {
+        mainWindow.loadURL("http://localhost:5173");
+    } else {
+        mainWindow.loadFile(path.join(__dirname, "../../dist/index.html"));
+    }
 
     mainWindow.on("close", (e) => {
 

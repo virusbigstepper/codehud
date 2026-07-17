@@ -40,7 +40,7 @@
 
     font-weight:500;
 
-    color:#ffffff;
+    color:var(--text-primary, #ffffff);
 }
 
 .task-add-icon{
@@ -315,7 +315,7 @@
 
     border:1px solid rgba(255,255,255,.12);
 
-    background:#0d0d0d;
+    background:var(--bg-input, #0d0d0d);
 
     color:white;
 
@@ -348,7 +348,7 @@
 
     border:1px solid rgba(255,255,255,.12);
 
-    background:#0d0d0d;
+    background:var(--bg-input, #0d0d0d);
 
     color:white;
 
@@ -365,7 +365,7 @@
 
 .priority-select option{
 
-    background:#0d0d0d;
+    background:var(--bg-input, #0d0d0d);
 
     color:white;
 }

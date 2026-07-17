@@ -119,23 +119,19 @@ const CodingTrackerWidget = () => {
 
             </div>
 
-            <div className="coding-divider"></div>
+            {activeLanguages.length > 0 && (
+                <>
+                    <div className="coding-divider"></div>
 
-            <div className="top-language">
+                    <div className="top-language">
 
-                <span>
+                        <span>Top Language:</span>
 
-                    Top Language:
+                        <strong>{stats.topLanguage}</strong>
 
-                </span>
-
-                <strong>
-
-                    {stats.topLanguage}
-
-                </strong>
-
-            </div>
+                    </div>
+                </>
+            )}
 
         </div>
 

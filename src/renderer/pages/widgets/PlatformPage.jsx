@@ -1,4 +1,4 @@
-import PlatformAnalyzerWidget from "../../../widgets/PlatoformAnalyzerWidget/analyzer.jsx";
+import PlatformAnalyzerWidget from "../../../widgets/PlatformAnalyzerWidget/analyzer.jsx";
 import WidgetFrame from "../../components/WidgetFrame.jsx";
 
 export default function PlatformPage() {
