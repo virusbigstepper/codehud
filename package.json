@@ -14,7 +14,9 @@
     "electron": "electron .",
     "electron:dev": "vite build && electron .",
     "dist": "vite build && electron-builder",
-    "dist:win": "vite build && electron-builder --win"
+    "dist:win": "vite build && electron-builder --win",
+    "dist:linux": "vite build && electron-builder --linux",
+    "dist:mac": "vite build && electron-builder --mac"
   },
   "dependencies": {
     "chokidar": "3.6.0",
@@ -53,13 +55,32 @@
     ],
     "win": {
       "target": ["nsis"],
-      "icon": "public/codehud.png"
+      "icon": "public/codehud.png",
+      "signAndEditExecutable": false
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true
+    },
+    "mac": {
+      "target": ["dmg"],
+      "icon": "public/codehud.png",
+      "category": "public.app-category.developer-tools"
+    },
+    "dmg": {
+      "title": "CodeHUD",
+      "contents": [
+        { "x": 130, "y": 220 },
+        { "x": 410, "y": 220, "type": "link", "path": "/Applications" }
+      ]
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "icon": "public/codehud.png",
+      "category": "Development",
+      "maintainer": "virusbigstepper"
     }
   }
 }
