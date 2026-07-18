@@ -41,6 +41,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: List release files
+        run: ls -R release/ || dir release /s
+        shell: bash
+        continue-on-error: true
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -50,8 +55,6 @@ jobs:
             release/*.dmg
             release/*.AppImage
             release/*.deb
-            release/*.blockmap
-            release/latest*.yml
 
   release:
     needs: build
@@ -65,9 +68,16 @@ jobs:
           path: artifacts
           merge-multiple: true
 
+      - name: List downloaded artifacts
+        run: find artifacts/ -type f || true
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/**/*
-          draft: true
+          files: |
+            artifacts/**/*.exe
+            artifacts/**/*.dmg
+            artifacts/**/*.AppImage
+            artifacts/**/*.deb
+          draft: false
           generate_release_notes: true
