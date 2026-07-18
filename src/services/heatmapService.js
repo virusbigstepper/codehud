@@ -251,7 +251,7 @@ class HeatmapService {
 
             month: currentMonth,
 
-            trackedFolder: "C:\\Code",
+            trackedFolder: null,
 
             bestStreak: this.data.bestStreak,
 

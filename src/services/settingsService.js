@@ -90,7 +90,7 @@ class SettingsService {
             codeforcesUsername: "",
             githubUsername: "",
             gfgUsername: "",
-            trackedFolder: "C:\\Code",
+            trackedFolder: "",
 
             showAnalytics: true,
             showTaskWidget: true,

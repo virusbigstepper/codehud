@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import "./heatmap.css";
 import HeatmapService from "../../services/heatmapService.js";
+import settingsService from "../../services/settingsService.js";
 
 const HeatmapWidget = () => {
 
     const [stats, setStats] = useState(
         HeatmapService.getStats()
     );
+
+    const [trackedFolder, setTrackedFolder] = useState("");
 
     useEffect(() => {
 
@@ -15,6 +18,13 @@ const HeatmapWidget = () => {
             setStats(HeatmapService.getStats());
 
         };
+
+        const loadFolder = async () => {
+            const settings = await settingsService.getSettings();
+            setTrackedFolder(settings.trackedFolder || "");
+        };
+
+        loadFolder();
 
         const unsubscribe = HeatmapService.subscribe(updateStats);
 
@@ -33,7 +43,7 @@ const HeatmapWidget = () => {
                 </span>
 
                 <span className="heatmap-folder">
-                    contributing in {stats.trackedFolder}
+                    contributing in {trackedFolder || "No folder selected"}
                 </span>
 
             </div>

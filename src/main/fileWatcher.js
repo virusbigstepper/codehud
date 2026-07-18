@@ -28,7 +28,12 @@ class FileWatcher {
         this.mainWindow = mainWindow;
 
         const settings = StorageManager.load("settings.json");
-        this.trackedFolder = settings?.trackedFolder || "C:\\Code";
+        this.trackedFolder = settings?.trackedFolder || "";
+
+        if (!this.trackedFolder) {
+            console.log("[FileWatcher] No tracked folder configured, skipping.");
+            return;
+        }
 
         console.log(`[FileWatcher] Watching: ${this.trackedFolder}`);
 
