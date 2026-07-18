@@ -232,20 +232,28 @@ app.whenReady().then(() => {
 
     if (settings && settings.startupWidgets) {
 
-        setTimeout(() => {
+        const hasAnyStartupWidget = Object.values(settings.startupWidgets).some(v => v);
 
-            for (const [name, enabled] of Object.entries(settings.startupWidgets)) {
+        if (hasAnyStartupWidget) {
 
-                
+            setTimeout(() => {
 
-                if (enabled) {
-                    openWidget(name);
+                for (const [name, enabled] of Object.entries(settings.startupWidgets)) {
+
+                    if (enabled) {
+                        openWidget(name);
+                    }
+
                 }
 
-            }
+            }, 1500);
 
-        }, 1500);
+        } else {
+            mainWindow.show();
+        }
 
+    } else {
+        mainWindow.show();
     }
 
 });

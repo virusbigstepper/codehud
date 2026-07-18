@@ -16,7 +16,7 @@ export function createTray(mainWindow) {
     const isDev = !app.isPackaged;
     const iconPath = isDev
         ? path.join(process.cwd(), "public", "codehud.png")
-        : path.join(__dirname, "../../public/codehud.png");
+        : path.join(process.resourcesPath, "codehud.png");
 
     try {
         tray = new Tray(iconPath);

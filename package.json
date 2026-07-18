@@ -53,6 +53,12 @@
       "public/**/*",
       "node_modules/**/*"
     ],
+    "extraResources": [
+      {
+        "from": "public/codehud.png",
+        "to": "codehud.png"
+      }
+    ],
     "win": {
       "target": ["nsis"],
       "icon": "public/codehud.png",
@@ -67,7 +73,10 @@
     "mac": {
       "target": ["dmg"],
       "icon": "public/codehud.png",
-      "category": "public.app-category.developer-tools"
+      "category": "public.app-category.developer-tools",
+      "identity": null,
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false
     },
     "dmg": {
       "title": "CodeHUD",
