@@ -18,10 +18,15 @@ let isQuitting = false;
 
 function createWindow() {
 
+    const iconPath = isDev
+        ? path.join(process.cwd(), "public", "codehud.png")
+        : path.join(process.resourcesPath, "codehud.png");
+
     mainWindow = new BrowserWindow({
         width: 1400,
         height: 900,
         show: false,
+        icon: iconPath,
 
         webPreferences: {
             preload: path.join(__dirname, "preload.cjs"),
